@@ -30,7 +30,23 @@ function getDbConnection() {
 
 // Set CORS headers
 function setCorsHeaders() {
-    header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGIN);
+    // Get origin from request
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+    // Allow localhost origins for development
+    $allowedOrigins = [
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:3000',
+        'http://127.0.0.1:5173',
+    ];
+
+    if (in_array($origin, $allowedOrigins)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    } else {
+        header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGIN);
+    }
+
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Allow-Credentials: true');
