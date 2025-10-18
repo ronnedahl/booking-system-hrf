@@ -68,4 +68,4 @@ if (isset($associations[$code])) {
 }
 
 // Invalid credentials
-sendErrorResponse('Invalid login code', 401);
+sendErrorResponse('Koden som du angivit är tyvärr fel', 401);
