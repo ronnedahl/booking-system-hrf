@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import styles from './Login.module.css' 
 
 export default function Login() {
   const [code, setCode] = useState('')
@@ -26,72 +27,94 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Kanban Bokningssystem
-            </h1>
-            <p className="text-gray-600">
-              Logga in med din föreningskod
-            </p>
-          </div>
+    <div className={styles.loginContainer}>
+      <div className={styles.loginBox}>
+        <h1
+          style={{
+            margin: '0 0 1rem 0',
+            color: '#004A87', // Mörkare blå färg från bilden
+            fontSize: '2.2rem',
+            fontWeight: 700,
+            letterSpacing: '0.1rem',
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          }}
+        >
+          BOKNING KONFERANS
+        </h1>
 
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="code"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Föreningskod eller Admin-lösenord
-              </label>
-              <input
-                id="code"
-                type="text"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                placeholder="ABC123 eller admin123"
-                required
-                disabled={loading}
-              />
-            </div>
+        
+        <p className={styles.welcomeText}>
+          Välkommen! Ange er föreningskod för att fortsätta.
+        </p>
 
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        <form onSubmit={handleSubmit}>
+          <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
+            <label
+              htmlFor="code"
+              style={{
+                display: 'block',
+                fontWeight: 600, // Semi-bold
+                fontSize: '1.2rem',
+                color: '#212529',
+                marginBottom: '0.5rem'
+              }}
             >
-              {loading ? 'Loggar in...' : 'Logga in'}
-            </button>
-          </form>
+              Föreningskod
+            </label>
 
-          {/* Help Text */}
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Test-koder:</p>
-            <p className="mt-1">
-              <span className="font-mono bg-gray-100 px-2 py-1 rounded">ABC123</span>
-              {' '} eller {' '}
-              <span className="font-mono bg-gray-100 px-2 py-1 rounded">XYZ789</span>
-              {' '} (användare)
-            </p>
-            <p className="mt-1">
-              <span className="font-mono bg-gray-100 px-2 py-1 rounded">admin123</span>
-              {' '} (admin)
-            </p>
+            <input
+              id="code"
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              required
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '0.8rem 1rem',
+                fontSize: '1rem',
+                border: '1px solid #ced4da', // Tunn, ljusgrå ram
+                borderRadius: '6px',
+                boxSizing: 'border-box'
+              }}
+            />
           </div>
-        </div>
+
+          {error && (
+            <div
+              style={{
+                padding: '0.8rem',
+                marginBottom: '1rem',
+                backgroundColor: '#f8d7da',
+                border: '1px solid #f5c2c7',
+                borderRadius: '6px',
+                color: '#842029',
+                fontSize: '0.95rem'
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '0.9rem 1rem',
+              fontSize: '1.1rem',
+              border: 'none',
+              borderRadius: '6px',
+              backgroundColor: '#005A9C', // Blå färg från bilden
+              color: 'white',
+              fontWeight: 'bold',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? 'Loggar in...' : 'Logga in'}
+          </button>
+        </form>
       </div>
     </div>
   )
