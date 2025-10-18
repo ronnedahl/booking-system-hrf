@@ -1,0 +1,55 @@
+{
+  "bookings": [
+    {
+      "id": 1,
+      "date": "2025-11-15",
+      "roomId": 1,
+      "startTime": "10:00",
+      "duration": 60,
+      "userFirstname": "Anna",
+      "associationId": 1
+    },
+    {
+      "id": 2,
+      "date": "2025-11-15",
+      "roomId": 1,
+      "startTime": "14:00",
+      "duration": 90,
+      "userFirstname": "Erik",
+      "associationId": 2
+    },
+    {
+      "id": 3,
+      "date": "2025-11-16",
+      "roomId": 2,
+      "startTime": "09:00",
+      "duration": 120,
+      "userFirstname": "Maria",
+      "associationId": 1
+    }
+  ],
+  "associations": [
+    {
+      "id": 1,
+      "name": "Förening A",
+      "code": "ABC123"
+    },
+    {
+      "id": 2,
+      "name": "Förening B",
+      "code": "XYZ789"
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "name": "Lokal A",
+      "capacity": 20
+    },
+    {
+      "id": 2,
+      "name": "Lokal B",
+      "capacity": 15
+    }
+  ]
+}
