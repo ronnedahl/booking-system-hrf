@@ -1,4 +1,5 @@
 import logo from '../assets/logga-funktionsratt.png'
+import styles from './OrganizationNav.module.css'
 
 interface OrganizationNavProps {
   organizationName: string
@@ -21,42 +22,21 @@ export default function OrganizationNav({ organizationName }: OrganizationNavPro
     <nav
       role="banner"
       aria-label="Organisationsnavigation"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '70px',
-        backgroundColor: '#000000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 2rem',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-        zIndex: 1000
-      }}
+      className={styles.nav}
     >
-      {/* Logo */}
+      {/* Logo - hidden on mobile/tablet, shown on desktop */}
       <img
         src={logo}
         alt="Funktionsrätt logotyp"
-        style={{
-          height: '50px',
-          width: 'auto'
-        }}
+        className={styles.logo}
       />
 
-      {/* Organization Name */}
+      {/* Organization Name - centered */}
       <div
-        style={{
-          color: '#FFFFFF',
-          fontSize: '1.2rem',
-          fontWeight: 600,
-          letterSpacing: '0.05rem'
-        }}
+        className={styles.organizationName}
         aria-label={`Inloggad som ${organizationName}`}
       >
-        {organizationName}
+        Inloggad som: {organizationName}
       </div>
     </nav>
   )

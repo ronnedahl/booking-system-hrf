@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import OrganizationNav from './OrganizationNav'
+import styles from './CalendarView.module.css'
 
 interface Booking {
   id: number
@@ -165,51 +166,25 @@ export default function CalendarView() {
         ref={calendarRef}
         role="region"
         aria-label="Kalender för bokning av konferenslokaler"
-        style={{
-          fontFamily: 'var(--font-family)',
-          paddingTop: '90px', // Space for fixed nav
-          paddingLeft: '1rem',
-          paddingRight: '1rem'
-        }}
+        className={styles.calendarContainer}
       >
         {/* Calendar Header */}
         <nav
         aria-label="Kalendermånadsnavigation"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem'
-        }}
+        className={styles.calendarHeader}
       >
         <button
           onClick={goToPreviousMonth}
           disabled={loading}
           aria-label={`Föregående månad, ${month === 1 ? monthNames[11] : monthNames[month - 2]}`}
-          style={{
-            background: 'none',
-            border: '1px solid #DEE2E6',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            fontSize: '1.2rem'
-          }}
+          className={styles.navButton}
         >
           <span aria-hidden="true">←</span>
         </button>
 
         <h2
           id="calendar-heading"
-          style={{
-            margin: 0,
-            fontSize: '1.5rem',
-            textTransform: 'capitalize',
-            color: '#005A9C'
-          }}
+          className={styles.monthHeading}
         >
           {monthNames[month - 1]} {year}
         </h2>
@@ -218,18 +193,7 @@ export default function CalendarView() {
           onClick={goToNextMonth}
           disabled={loading}
           aria-label={`Nästa månad, ${month === 12 ? monthNames[0] : monthNames[month]}`}
-          style={{
-            background: 'none',
-            border: '1px solid #DEE2E6',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            fontSize: '1.2rem'
-          }}
+          className={styles.navButton}
         >
           <span aria-hidden="true">→</span>
         </button>
@@ -257,12 +221,7 @@ export default function CalendarView() {
         role="grid"
         aria-labelledby="calendar-heading"
         aria-readonly="true"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(7, 1fr)',
-          gap: '0.5rem',
-          textAlign: 'center'
-        }}
+        className={styles.calendarGrid}
       >
         {/* Weekday Headers */}
         <div role="row" style={{ display: 'contents' }}>
@@ -270,12 +229,7 @@ export default function CalendarView() {
             <div
               key={day}
               role="columnheader"
-              style={{
-                fontWeight: 'bold',
-                color: '#6C757D',
-                fontSize: '0.9rem',
-                padding: '0.5rem 0'
-              }}
+              className={styles.weekdayHeader}
             >
               {day}
             </div>
@@ -308,71 +262,20 @@ export default function CalendarView() {
                 aria-selected={selectedDay === day}
                 aria-current={isToday ? 'date' : undefined}
                 aria-disabled={isPast}
-                style={{
-                  padding: '0.5rem 0',
-                  border: '1px solid transparent',
-                  borderRadius: '4px',
-                  cursor: isPast ? 'default' : 'pointer',
-                  position: 'relative',
-                  backgroundColor: isToday ? '#E6F0F6' : 'transparent',
-                  opacity: isPast ? 0.5 : 1,
-                  minHeight: '44px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isPast) {
-                    e.currentTarget.style.backgroundColor = '#E6F0F6'
-                    e.currentTarget.style.borderColor = '#005A9C'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isPast && !isToday) {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                    e.currentTarget.style.borderColor = 'transparent'
-                  }
-                }}
-                onFocus={(e) => {
-                  if (!isPast) {
-                    e.currentTarget.style.outline = '3px solid #007BFF'
-                    e.currentTarget.style.outlineOffset = '2px'
-                  }
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.outline = 'none'
-                }}
+                className={`${styles.dayCell} ${isPast ? styles.past : ''} ${isToday ? styles.today : ''}`}
               >
-                <div style={{ fontSize: '1.1rem' }}>{day}</div>
+                <div className={styles.dayNumber}>{day}</div>
                 {fullyBooked && (
                   <div
                     aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      bottom: '5px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '6px',
-                      height: '6px',
-                      backgroundColor: '#DC3545',
-                      borderRadius: '50%'
-                    }}
+                    className={`${styles.bookingIndicator} ${styles.full}`}
                     title="Fullbokad"
                   />
                 )}
                 {!fullyBooked && dayBookings.length > 0 && (
                   <div
                     aria-hidden="true"
-                    style={{
-                      position: 'absolute',
-                      bottom: '5px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: '6px',
-                      height: '6px',
-                      backgroundColor: '#198754',
-                      borderRadius: '50%'
-                    }}
+                    className={`${styles.bookingIndicator} ${styles.partial}`}
                     title={`${dayBookings.length} bokning(ar)`}
                   />
                 )}
