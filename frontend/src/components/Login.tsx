@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import styles from './Login.module.css' 
+import styles from './Login.module.css'
+import logo from '../assets/logga-funktionsratt.png' 
 
 export default function Login() {
   const [code, setCode] = useState('')
@@ -27,12 +28,26 @@ export default function Login() {
   }
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginBox}>
+    <div className={styles.loginContainer} role="main" aria-label="Inloggningssida">
+      {/* Logo i vänster övre hörnet */}
+      <img
+        src={logo}
+        alt="Funktionsrätt logotyp"
+        style={{
+          position: 'absolute',
+          top: '1.5rem',
+          left: '8rem',
+          height: '80px',
+          width: 'auto'
+        }}
+      />
+
+      <div className={styles.loginBox} role="region" aria-labelledby="login-heading">
         <h1
+          id="login-heading"
           style={{
             margin: '0 0 1rem 0',
-            color: '#004A87', // Mörkare blå färg från bilden
+            color: '#004A87',
             fontSize: '2.2rem',
             fontWeight: 700,
             letterSpacing: '0.1rem',
@@ -42,18 +57,18 @@ export default function Login() {
           BOKNING KONFERANS
         </h1>
 
-        
+
         <p className={styles.welcomeText}>
           Välkommen! Ange er föreningskod för att fortsätta.
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} aria-label="Inloggningsformulär">
           <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
             <label
               htmlFor="code"
               style={{
                 display: 'block',
-                fontWeight: 600, // Semi-bold
+                fontWeight: 600,
                 fontSize: '1.2rem',
                 color: '#212529',
                 marginBottom: '0.5rem'
@@ -64,16 +79,22 @@ export default function Login() {
 
             <input
               id="code"
+              name="code"
               type="text"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
               disabled={loading}
+              aria-required="true"
+              aria-invalid={error ? 'true' : 'false'}
+              aria-describedby={error ? 'login-error' : undefined}
+              autoComplete="username"
+              placeholder="Ange din föreningskod"
               style={{
                 width: '100%',
                 padding: '0.8rem 1rem',
                 fontSize: '1rem',
-                border: '1px solid #ced4da', // Tunn, ljusgrå ram
+                border: '1px solid #ced4da',
                 borderRadius: '6px',
                 boxSizing: 'border-box'
               }}
@@ -82,6 +103,9 @@ export default function Login() {
 
           {error && (
             <div
+              id="login-error"
+              role="alert"
+              aria-live="assertive"
               style={{
                 padding: '0.8rem',
                 marginBottom: '1rem',
@@ -99,13 +123,15 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
+            aria-label={loading ? 'Loggar in, vänligen vänta' : 'Logga in med din föreningskod'}
+            aria-busy={loading}
             style={{
               width: '100%',
               padding: '0.9rem 1rem',
               fontSize: '1.1rem',
               border: 'none',
               borderRadius: '6px',
-              backgroundColor: '#005A9C', // Blå färg från bilden
+              backgroundColor: '#005A9C',
               color: 'white',
               fontWeight: 'bold',
               cursor: loading ? 'not-allowed' : 'pointer',
@@ -115,6 +141,26 @@ export default function Login() {
             {loading ? 'Loggar in...' : 'Logga in'}
           </button>
         </form>
+      </div>
+
+      {/* Screen reader live region for status updates */}
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          borderWidth: 0
+        }}
+      >
+        {loading && 'Loggar in, vänligen vänta'}
       </div>
     </div>
   )
