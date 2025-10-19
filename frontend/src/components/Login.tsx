@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import styles from './Login.module.css' 
+import styles from './Login.module.css'
+import logo from '../assets/logga-funktionsratt.png' 
 
 export default function Login() {
   const [code, setCode] = useState('')
@@ -28,6 +29,19 @@ export default function Login() {
 
   return (
     <div className={styles.loginContainer} role="main" aria-label="Inloggningssida">
+      {/* Logo i vänster övre hörnet */}
+      <img
+        src={logo}
+        alt="Funktionsrätt logotyp"
+        style={{
+          position: 'absolute',
+          top: '1.5rem',
+          left: '8rem',
+          height: '80px',
+          width: 'auto'
+        }}
+      />
+
       <div className={styles.loginBox} role="region" aria-labelledby="login-heading">
         <h1
           id="login-heading"
