@@ -12,6 +12,7 @@ interface TimeSlot {
 
 interface Booking {
   id: number
+  date: string
   roomId: number
   roomName: string
   startTime: string

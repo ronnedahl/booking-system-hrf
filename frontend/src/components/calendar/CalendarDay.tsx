@@ -12,7 +12,6 @@ export default function CalendarDay({
   isPast,
   isToday,
   fullyBooked,
-  bookings,
   ariaLabel,
   onClick,
   onKeyDown
