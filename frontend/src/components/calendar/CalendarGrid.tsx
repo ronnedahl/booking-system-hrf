@@ -21,11 +21,44 @@ export default function CalendarGrid({
 }: CalendarGridProps) {
   const handleKeyDown = (e: React.KeyboardEvent, day: number) => {
     const isPast = helpers.isPastDate(day, month, year)
-    if (isPast) return
 
+    // Handle Enter and Space for selection
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      onDayClick(day)
+      if (!isPast) {
+        onDayClick(day)
+      }
+      return
+    }
+
+    // Arrow key navigation
+    let targetDay = day
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        targetDay = day - 1
+        break
+      case 'ArrowRight':
+        targetDay = day + 1
+        break
+      case 'ArrowUp':
+        targetDay = day - 7
+        break
+      case 'ArrowDown':
+        targetDay = day + 7
+        break
+      default:
+        return // Don't handle other keys
+    }
+
+    // Validate target day is within month bounds
+    if (targetDay >= 1 && targetDay <= daysInMonth) {
+      e.preventDefault()
+      // Find and focus the target day cell
+      const targetCell = document.querySelector(`[data-day="${targetDay}"]`) as HTMLElement
+      if (targetCell) {
+        targetCell.focus()
+      }
     }
   }
 

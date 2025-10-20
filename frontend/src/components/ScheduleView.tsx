@@ -184,11 +184,11 @@ function ScheduleView() {
         </div>
 
         {/* Instruction text */}
-        <div className={styles.instructionText}>
+        <div className={styles.instructionText} role="note" aria-label="Förklaring av färgkodning i schemat">
           <strong>Grön (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd (✗)</strong> = Bokad | <strong>Grå (⊘)</strong> = Stängt
         </div>
 
-      <div className={styles.scheduleGrid}>
+      <div className={styles.scheduleGrid} role="table" aria-label="Dagsschema för bokningsbara lokaler">
         {/* Header row */}
         <div className={styles.cornerCell}></div>
         {schedules.map(schedule => (
@@ -199,8 +199,8 @@ function ScheduleView() {
 
         {/* Time slots */}
         {timeSlots.map(slot => (
-          <div key={slot.time} className={styles.row}>
-            <div className={styles.timeLabel}>{slot.time}</div>
+          <div key={slot.time} className={styles.row} role="row">
+            <div className={styles.timeLabel} role="rowheader" aria-label={`Tidslot ${slot.time}`}>{slot.time}</div>
 
             {schedules.map(schedule => {
               const booking = isSlotBooked(schedule.roomId, slot.time)
@@ -211,6 +211,8 @@ function ScheduleView() {
                   <div
                     key={`${schedule.roomId}-${slot.time}`}
                     className={`${styles.slot} ${styles.blocked}`}
+                    role="cell"
+                    aria-label={`${schedule.roomName} klockan ${slot.time}: Stängt, ej bokningsbar tid`}
                     title="Ej bokningsbar tid"
                   >
                     <span className={styles.blockedIcon} aria-hidden="true">⊘</span>
@@ -224,6 +226,8 @@ function ScheduleView() {
                   <div
                     key={`${schedule.roomId}-${slot.time}`}
                     className={`${styles.slot} ${styles.booked}`}
+                    role="cell"
+                    aria-label={`${schedule.roomName} klockan ${slot.time}: Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}`}
                     title={`Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}`}
                   >
                     <span className={styles.statusIconSchedule} aria-hidden="true">✗</span>

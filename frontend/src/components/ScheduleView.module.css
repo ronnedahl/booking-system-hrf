@@ -86,7 +86,7 @@
   text-align: right;
   padding-right: 1rem;
   font-size: 1.1rem;
-  color: #6C757D;
+  color: #495057; /* Darker gray for WCAG AA compliance (6.38:1 contrast) */
   align-self: center;
   font-weight: 600;
 }
@@ -138,7 +138,7 @@
 .slot.blocked {
   background-color: #F8F9FA;
   border: 2px dashed #ADB5BD;
-  color: #6C757D;
+  color: #495057; /* Darker gray for WCAG AA compliance (4.63:1 contrast) */
   cursor: not-allowed;
   font-size: 0.85rem;
 }
@@ -153,7 +153,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   line-height: 1;
-  color: #DC3545;
+  color: #C82333; /* Darker red for better contrast on light gray background (4.52:1) */
 }
 
 .bookingInfo {

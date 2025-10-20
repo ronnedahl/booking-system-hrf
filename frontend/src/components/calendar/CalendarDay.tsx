@@ -24,6 +24,7 @@ export default function CalendarDay({
   return (
     <div
       role="gridcell"
+      data-day={day}
       tabIndex={isPast ? -1 : 0}
       onClick={onClick}
       onKeyDown={onKeyDown}
