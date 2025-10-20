@@ -114,7 +114,8 @@ function ScheduleView() {
     const room = schedules.find(s => s.roomId === roomId)
     if (!room) return null
 
-    return room.bookings.find(b => b.startTime === time) || null
+    // Compare only HH:MM part (API returns HH:MM:SS)
+    return room.bookings.find(b => b.startTime.substring(0, 5) === time) || null
   }
 
   const isSlotBlocked = (hour: number): boolean => {
