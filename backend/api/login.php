@@ -14,58 +14,54 @@ validateRequiredFields($data, ['code']);
 
 $code = trim($data['code']);
 
-// Hardcoded credentials for development (replace with DB when MySQL is available)
-// Admin password: "admin123"
-// Förening A code: "ABC123"
-// Förening B code: "XYZ789"
+try {
+    $pdo = getDbConnection();
 
-$adminPasswordHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // admin123
-$associations = [
-    'ABC123' => [
-        'id' => 1,
-        'name' => 'Förening A',
-        'code_hash' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
-    ],
-    'XYZ789' => [
-        'id' => 2,
-        'name' => 'Förening B',
-        'code_hash' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
-    ]
-];
+    // Check if admin login (password: "admin123")
+    $adminStmt = $pdo->prepare("SELECT password_hash FROM admin_credentials WHERE id = 1");
+    $adminStmt->execute();
+    $adminData = $adminStmt->fetch();
 
-// Check if admin login
-if ($code === 'admin123') {
-    // Start session
-    session_start();
-    $_SESSION['role'] = 'admin';
-    $_SESSION['authenticated'] = true;
+    if ($adminData && password_verify($code, $adminData['password_hash'])) {
+        // Admin login successful
+        session_start();
+        $_SESSION['role'] = 'admin';
+        $_SESSION['authenticated'] = true;
 
-    sendJsonResponse([
-        'success' => true,
-        'role' => 'admin',
-        'message' => 'Admin logged in successfully'
-    ]);
+        sendJsonResponse([
+            'success' => true,
+            'role' => 'admin',
+            'message' => 'Admin logged in successfully'
+        ]);
+    }
+
+    // Check association codes from database
+    $assocStmt = $pdo->prepare("SELECT id, name, code_hash FROM associations");
+    $assocStmt->execute();
+    $associations = $assocStmt->fetchAll();
+
+    foreach ($associations as $association) {
+        if (password_verify($code, $association['code_hash'])) {
+            // Association login successful
+            session_start();
+            $_SESSION['role'] = 'user';
+            $_SESSION['authenticated'] = true;
+            $_SESSION['associationId'] = $association['id'];
+            $_SESSION['associationName'] = $association['name'];
+
+            sendJsonResponse([
+                'success' => true,
+                'role' => 'user',
+                'associationId' => $association['id'],
+                'associationName' => $association['name'],
+                'message' => 'User logged in successfully'
+            ]);
+        }
+    }
+
+    // Invalid credentials
+    sendErrorResponse('Koden som du angivit är tyvärr fel', 401);
+
+} catch (PDOException $e) {
+    sendErrorResponse('Database error: ' . $e->getMessage(), 500);
 }
-
-// Check association codes
-if (isset($associations[$code])) {
-    $association = $associations[$code];
-
-    // Start session
-    session_start();
-    $_SESSION['role'] = 'user';
-    $_SESSION['authenticated'] = true;
-    $_SESSION['associationId'] = $association['id'];
-    $_SESSION['associationName'] = $association['name'];
-
-    sendJsonResponse([
-        'success' => true,
-        'role' => 'user',
-        'associationId' => $association['id'],
-        'associationName' => $association['name'],
-        'message' => 'User logged in successfully'
-    ]);
-}
-
-// Invalid credentials
-sendErrorResponse('Koden som du angivit är tyvärr fel', 401);

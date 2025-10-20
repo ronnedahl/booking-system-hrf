@@ -54,12 +54,12 @@ export default function Login() {
             fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
           }}
         >
-          BOKNING KONFERANS
+          BOKA KONFERENSRUM
         </h1>
 
 
         <p className={styles.welcomeText}>
-          Välkommen! Ange er föreningskod för att fortsätta.
+         Välkommen! Ange din föreningskod för att se lediga tider och boka.
         </p>
 
         <form onSubmit={handleSubmit} aria-label="Inloggningsformulär">

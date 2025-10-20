@@ -1,0 +1,264 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-top: 100px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.instructionText {
+  text-align: center;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1.5rem;
+  background-color: #E6F0F6;
+  border-left: 4px solid #005A9C;
+  border-radius: 6px;
+  color: #212529;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #005A9C;
+  text-transform: capitalize;
+  font-weight: 700;
+}
+
+.backButton {
+  padding: 0.6rem 1.2rem;
+  background-color: #F1F3F5;
+  border: 1px solid #DEE2E6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #005A9C;
+  transition: background-color 0.2s;
+}
+
+.backButton:hover {
+  background-color: #E6F0F6;
+}
+
+.backButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
+.scheduleGrid {
+  display: grid;
+  grid-template-columns: 80px repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.cornerCell {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.roomHeader {
+  font-weight: bold;
+  padding: 0.75rem;
+  text-align: center;
+  background-color: #005A9C;
+  color: white;
+  border-radius: 4px;
+  font-size: 1.3rem;
+}
+
+.row {
+  display: contents;
+}
+
+.timeLabel {
+  grid-column: 1;
+  text-align: right;
+  padding-right: 1rem;
+  font-size: 1.1rem;
+  color: #495057; /* Darker gray for WCAG AA compliance (6.38:1 contrast) */
+  align-self: center;
+  font-weight: 600;
+}
+
+.slot {
+  padding: 1.2rem 0.5rem;
+  border: 1px solid #DEE2E6;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  text-align: center;
+  min-height: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.slot.free {
+  background-color: #198754;
+  color: #FFFFFF;
+  border: 2px solid #146C43;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slot.free:hover {
+  background-color: #146C43;
+  border-color: #0F5132;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(21, 135, 84, 0.3);
+}
+
+.slot.free:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
+.slot.booked {
+  background-color: #E63946;
+  color: #FFFFFF;
+  border: 2px solid #C1121F;
+  font-weight: bold;
+  cursor: not-allowed;
+  box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
+}
+
+.slot.blocked {
+  background-color: #F8F9FA;
+  border: 2px dashed #ADB5BD;
+  color: #495057; /* Darker gray for WCAG AA compliance (4.63:1 contrast) */
+  cursor: not-allowed;
+  font-size: 0.85rem;
+}
+
+.statusIconSchedule {
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.blockedIcon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #C82333; /* Darker red for better contrast on light gray background (4.52:1) */
+}
+
+.bookingInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.bookingName {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.bookingAssociation {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.error {
+  color: #DC3545;
+  padding: 1rem;
+  background-color: #FFE6E6;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+    padding-top: 90px;
+  }
+
+  .instructionText {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .scheduleGrid {
+    grid-template-columns: 60px repeat(2, 1fr);
+    gap: 0.25rem;
+  }
+
+  .timeLabel {
+    font-size: 0.95rem;
+    padding-right: 0.5rem;
+  }
+
+  .roomHeader {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  .slot {
+    padding: 0.8rem 0.25rem;
+    font-size: 0.85rem;
+    min-height: 50px;
+    gap: 0.2rem;
+  }
+
+  .statusIconSchedule {
+    font-size: 1rem;
+  }
+
+  .blockedIcon {
+    font-size: 1.1rem;
+  }
+
+  .bookingName {
+    font-size: 0.8rem;
+  }
+
+  .bookingAssociation {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+    padding-top: 90px;
+  }
+
+  .instructionText {
+    font-size: 1.05rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .scheduleGrid {
+    gap: 1rem;
+  }
+
+  .slot {
+    padding: 1.5rem 1rem;
+    font-size: 1.1rem;
+    gap: 0.4rem;
+  }
+
+  .statusIconSchedule {
+    font-size: 1.4rem;
+  }
+
+  .blockedIcon {
+    font-size: 1.5rem;
+  }
+}

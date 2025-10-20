@@ -89,8 +89,12 @@ export function isPastDate(
   currentYear: number
 ): boolean {
   const today = new Date()
-  const isCurrentMonth = today.getFullYear() === currentYear && today.getMonth() + 1 === currentMonth
-  return isCurrentMonth && day < today.getDate()
+  today.setHours(0, 0, 0, 0) // Reset time to start of day
+
+  const checkDate = new Date(currentYear, currentMonth - 1, day)
+  checkDate.setHours(0, 0, 0, 0) // Reset time to start of day
+
+  return checkDate < today
 }
 
 /**

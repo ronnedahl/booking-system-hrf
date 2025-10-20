@@ -18,15 +18,14 @@ import OrganizationNav from './OrganizationNav'
 import CalendarHeader from './calendar/CalendarHeader'
 import CalendarGrid from './calendar/CalendarGrid'
 import { useCalendar } from './calendar/useCalendar'
+import { useAuth } from '../contexts/AuthContext'
 import styles from './CalendarView.module.css'
 
 const WEEK_DAYS = ['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön']
 
 export default function CalendarView() {
   const calendarRef = useRef<HTMLDivElement>(null)
-
-  // TODO: Replace with dynamic data from AuthContext after database integration
-  const organizationName = 'Förening A'
+  const { authState } = useAuth()
 
   // Use custom hook for calendar logic
   const {
@@ -47,7 +46,7 @@ export default function CalendarView() {
   return (
     <>
       {/* Organization Navigation Bar */}
-      <OrganizationNav organizationName={organizationName} />
+      <OrganizationNav organizationName={authState.associationName || 'Okänd förening'} />
 
       {/* Calendar Content */}
       <div
@@ -65,6 +64,13 @@ export default function CalendarView() {
           onPreviousMonth={goToPreviousMonth}
           onNextMonth={goToNextMonth}
         />
+
+        {/* Instruction text */}
+        <div className={styles.instructionText}>
+          <strong>Grön bakgrund (✓)</strong> = Lediga tider finns | <strong>Röd bakgrund (✗)</strong> = Fullbokat
+          <br />
+          Klicka på en grön dag för att se vilka tider som är lediga i Wilmer 1 och Wilmer 2.
+        </div>
 
         {/* Error message */}
         {error && (

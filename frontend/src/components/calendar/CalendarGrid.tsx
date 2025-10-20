@@ -21,11 +21,44 @@ export default function CalendarGrid({
 }: CalendarGridProps) {
   const handleKeyDown = (e: React.KeyboardEvent, day: number) => {
     const isPast = helpers.isPastDate(day, month, year)
-    if (isPast) return
 
+    // Handle Enter and Space for selection
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      onDayClick(day)
+      if (!isPast) {
+        onDayClick(day)
+      }
+      return
+    }
+
+    // Arrow key navigation
+    let targetDay = day
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        targetDay = day - 1
+        break
+      case 'ArrowRight':
+        targetDay = day + 1
+        break
+      case 'ArrowUp':
+        targetDay = day - 7
+        break
+      case 'ArrowDown':
+        targetDay = day + 7
+        break
+      default:
+        return // Don't handle other keys
+    }
+
+    // Validate target day is within month bounds
+    if (targetDay >= 1 && targetDay <= daysInMonth) {
+      e.preventDefault()
+      // Find and focus the target day cell
+      const targetCell = document.querySelector(`[data-day="${targetDay}"]`) as HTMLElement
+      if (targetCell) {
+        targetCell.focus()
+      }
     }
   }
 
@@ -62,7 +95,15 @@ export default function CalendarGrid({
           const isPast = helpers.isPastDate(day, month, year)
           const isTodayDate = helpers.isToday(day, month, year)
           const dayBookings = helpers.getBookingsForDate(bookings, year, month, day)
-          const fullyBooked = dayBookings.length >= 2
+
+          // A day is fully booked when ALL time slots in BOTH rooms are booked
+          // 14 hours (08:00-22:00) - 2 blocked hours (09:00-10:00, 12:00-13:00) = 12 bookable slots per room
+          // 12 slots × 2 rooms = 24 total bookings needed for fully booked
+          const BOOKABLE_SLOTS_PER_ROOM = 12
+          const NUMBER_OF_ROOMS = 2
+          const MAX_BOOKINGS_PER_DAY = BOOKABLE_SLOTS_PER_ROOM * NUMBER_OF_ROOMS // 24
+          const fullyBooked = dayBookings.length >= MAX_BOOKINGS_PER_DAY
+
           const ariaLabel = helpers.getDayAriaLabel(
             day,
             month,

@@ -10,6 +10,18 @@
   margin: 0 auto;
 }
 
+.instructionText {
+  text-align: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #E6F0F6;
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  color: #212529;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
 .calendarHeader {
   display: flex;
   justify-content: space-between;
@@ -84,9 +96,34 @@
   background-color: #E6F0F6;
 }
 
+.dayCell.available {
+  background-color: #198754;
+  color: #FFFFFF;
+  border-color: #146C43;
+}
+
+.dayCell.fullyBooked {
+  background-color: #E63946;
+  color: #FFFFFF;
+  border-color: #C1121F;
+}
+
+.dayContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .dayNumber {
   font-size: 2rem;
   font-weight: bold;
+}
+
+.statusIcon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
 }
 
 .bookingIndicator {
@@ -116,6 +153,12 @@
     max-width: 100%;
   }
 
+  .instructionText {
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
   .monthHeading {
     font-size: 2rem;
   }
@@ -140,6 +183,14 @@
     font-size: 1.7rem;
   }
 
+  .statusIcon {
+    font-size: 1.3rem;
+  }
+
+  .dayContent {
+    gap: 0.4rem;
+  }
+
   .calendarGrid {
     gap: 0.8rem;
   }
@@ -157,6 +208,12 @@
     padding-left: 1rem;
     padding-right: 1rem;
     padding-top: 80px;
+  }
+
+  .instructionText {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
   }
 
   .calendarHeader {
@@ -190,6 +247,14 @@
     font-size: 1.5rem;
   }
 
+  .statusIcon {
+    font-size: 1.1rem;
+  }
+
+  .dayContent {
+    gap: 0.3rem;
+  }
+
   .calendarGrid {
     gap: 0.5rem;
   }
@@ -208,6 +273,13 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     padding-top: 75px;
+  }
+
+  .instructionText {
+    font-size: 0.85rem;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
   }
 
   .calendarHeader {
@@ -237,6 +309,14 @@
 
   .dayNumber {
     font-size: 1.3rem;
+  }
+
+  .statusIcon {
+    font-size: 1rem;
+  }
+
+  .dayContent {
+    gap: 0.2rem;
   }
 
   .calendarGrid {
@@ -284,9 +364,23 @@
 /* Hover effects (only on devices that support hover) */
 @media (hover: hover) {
   .dayCell:not(.past):hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .dayCell.available:hover {
+    background-color: #146C43;
+    border-color: #0F5132;
+  }
+
+  .dayCell.fullyBooked:hover {
+    background-color: #C1121F;
+    border-color: #A00F1A;
+  }
+
+  .dayCell:not(.available):not(.fullyBooked):not(.past):hover {
     background-color: #E6F0F6;
     border-color: #005A9C;
-    transform: scale(1.05);
   }
 }
 

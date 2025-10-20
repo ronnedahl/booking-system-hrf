@@ -8,11 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendErrorResponse('Method not allowed', 405);
 }
 
-// Verify authentication
+// Authentication not required for viewing bookings
+// Users need to see all bookings to know what slots are available
 session_start();
-if (!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']) {
-    sendErrorResponse('Unauthorized', 401);
-}
 
 // Get query parameters
 $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
@@ -26,63 +24,37 @@ if ($month < 1 || $month > 12) {
     sendErrorResponse('Invalid month', 400);
 }
 
-// Hardcoded test bookings (since MySQL not installed)
-// In production, this would be: SELECT * FROM bookings WHERE YEAR(date) = ? AND MONTH(date) = ?
-$allBookings = [
-    [
-        'id' => 1,
-        'date' => date('Y-m-15'), // 15th of current month
-        'roomId' => 1,
-        'roomName' => 'Lokal A',
-        'startTime' => '10:00',
-        'endTime' => '11:00',
-        'duration' => 60,
-        'userFirstname' => 'Anna',
-        'associationId' => 1,
-        'associationName' => 'Förening A'
-    ],
-    [
-        'id' => 2,
-        'date' => date('Y-m-15'), // Same day, different room
-        'roomId' => 2,
-        'roomName' => 'Lokal B',
-        'startTime' => '14:00',
-        'endTime' => '15:30',
-        'duration' => 90,
-        'userFirstname' => 'Erik',
-        'associationId' => 2,
-        'associationName' => 'Förening B'
-    ],
-    [
-        'id' => 3,
-        'date' => date('Y-m-20'), // 20th of current month
-        'roomId' => 1,
-        'roomName' => 'Lokal A',
-        'startTime' => '09:00',
-        'endTime' => '10:00',
-        'duration' => 60,
-        'userFirstname' => 'Maria',
-        'associationId' => 1,
-        'associationName' => 'Förening A'
-    ]
-];
+// Fetch bookings from MySQL database
+try {
+    $pdo = getDbConnection();
 
-// Filter bookings for requested month/year
-$filteredBookings = array_filter($allBookings, function($booking) use ($year, $month) {
-    $bookingDate = strtotime($booking['date']);
-    return date('Y', $bookingDate) == $year && date('n', $bookingDate) == $month;
-});
+    $sql = "SELECT
+                b.id,
+                b.date,
+                b.room_id as roomId,
+                r.name as roomName,
+                b.start_time as startTime,
+                TIME_FORMAT(ADDTIME(b.start_time, SEC_TO_TIME(b.duration * 60)), '%H:%i') as endTime,
+                b.duration,
+                b.user_firstname as userFirstname,
+                b.user_lastname as userLastname,
+                b.association_id as associationId,
+                a.name as associationName
+            FROM bookings b
+            JOIN rooms r ON b.room_id = r.id
+            JOIN associations a ON b.association_id = a.id
+            WHERE YEAR(b.date) = ? AND MONTH(b.date) = ?
+            ORDER BY b.date, b.start_time";
 
-// If user (not admin), only show their bookings
-if ($_SESSION['role'] === 'user' && isset($_SESSION['associationId'])) {
-    $filteredBookings = array_filter($filteredBookings, function($booking) {
-        return $booking['associationId'] === $_SESSION['associationId'];
-    });
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$year, $month]);
+    $filteredBookings = $stmt->fetchAll();
+
+} catch (PDOException $e) {
+    sendErrorResponse('Database error: ' . $e->getMessage(), 500);
 }
 
-// Re-index array to ensure proper JSON encoding
-$filteredBookings = array_values($filteredBookings);
-
+// Return with success wrapper for frontend compatibility
 sendJsonResponse([
     'success' => true,
     'bookings' => $filteredBookings,
