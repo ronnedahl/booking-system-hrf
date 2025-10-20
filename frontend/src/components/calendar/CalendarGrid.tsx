@@ -62,7 +62,15 @@ export default function CalendarGrid({
           const isPast = helpers.isPastDate(day, month, year)
           const isTodayDate = helpers.isToday(day, month, year)
           const dayBookings = helpers.getBookingsForDate(bookings, year, month, day)
-          const fullyBooked = dayBookings.length >= 2
+
+          // A day is fully booked when ALL time slots in BOTH rooms are booked
+          // 14 hours (08:00-22:00) - 2 blocked hours (09:00-10:00, 12:00-13:00) = 12 bookable slots per room
+          // 12 slots × 2 rooms = 24 total bookings needed for fully booked
+          const BOOKABLE_SLOTS_PER_ROOM = 12
+          const NUMBER_OF_ROOMS = 2
+          const MAX_BOOKINGS_PER_DAY = BOOKABLE_SLOTS_PER_ROOM * NUMBER_OF_ROOMS // 24
+          const fullyBooked = dayBookings.length >= MAX_BOOKINGS_PER_DAY
+
           const ariaLabel = helpers.getDayAriaLabel(
             day,
             month,

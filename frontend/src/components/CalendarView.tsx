@@ -66,6 +66,13 @@ export default function CalendarView() {
           onNextMonth={goToNextMonth}
         />
 
+        {/* Instruction text */}
+        <div className={styles.instructionText}>
+          <strong>Grön bakgrund (✓)</strong> = Lediga tider finns | <strong>Röd bakgrund (✗)</strong> = Fullbokat
+          <br />
+          Klicka på en grön dag för att se vilka tider som är lediga i Wilmer 1 och Wilmer 2.
+        </div>
+
         {/* Error message */}
         {error && (
           <div

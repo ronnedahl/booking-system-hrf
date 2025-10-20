@@ -17,6 +17,11 @@ export default function CalendarDay({
   onClick,
   onKeyDown
 }: CalendarDayProps) {
+  // Determine day status for styling
+  // Available (green) = not past and not fully booked (has available time slots)
+  const isAvailable = !isPast && !fullyBooked
+  const isFullyBooked = !isPast && fullyBooked
+
   return (
     <div
       role="gridcell"
@@ -26,25 +31,19 @@ export default function CalendarDay({
       aria-label={ariaLabel}
       aria-current={isToday ? 'date' : undefined}
       aria-disabled={isPast}
-      className={`${styles.dayCell} ${isPast ? styles.past : ''} ${isToday ? styles.today : ''}`}
+      className={`${styles.dayCell} ${isPast ? styles.past : ''} ${isToday ? styles.today : ''} ${isAvailable ? styles.available : ''} ${isFullyBooked ? styles.fullyBooked : ''}`}
     >
-      <div className={styles.dayNumber}>{day}</div>
+      <div className={styles.dayContent}>
+        <div className={styles.dayNumber}>{day}</div>
 
-      {/* Booking indicators */}
-      {fullyBooked && (
-        <div
-          aria-hidden="true"
-          className={`${styles.bookingIndicator} ${styles.full}`}
-          title="Fullbokad"
-        />
-      )}
-      {!fullyBooked && bookings.length > 0 && (
-        <div
-          aria-hidden="true"
-          className={`${styles.bookingIndicator} ${styles.partial}`}
-          title={`${bookings.length} bokning(ar)`}
-        />
-      )}
+        {/* Status icon for accessibility (color-blind friendly) */}
+        {isAvailable && (
+          <span className={styles.statusIcon} aria-hidden="true">✓</span>
+        )}
+        {isFullyBooked && (
+          <span className={styles.statusIcon} aria-hidden="true">✗</span>
+        )}
+      </div>
     </div>
   )
 }
