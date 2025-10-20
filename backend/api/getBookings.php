@@ -8,11 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendErrorResponse('Method not allowed', 405);
 }
 
-// Verify authentication
+// Authentication not required for viewing bookings
+// Users need to see all bookings to know what slots are available
 session_start();
-if (!isset($_SESSION['authenticated']) || !$_SESSION['authenticated']) {
-    sendErrorResponse('Unauthorized', 401);
-}
 
 // Get query parameters
 $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
@@ -27,17 +25,18 @@ if ($month < 1 || $month > 12) {
 }
 
 // Hardcoded test bookings (since MySQL not installed)
-// In production, this would be: SELECT * FROM bookings WHERE YEAR(date) = ? AND MONTH(date) = ?
+// In production: SELECT b.*, r.name as roomName, a.name as associationName FROM bookings b JOIN rooms r ON b.room_id = r.id JOIN associations a ON b.association_id = a.id WHERE YEAR(b.date) = ? AND MONTH(b.date) = ?
 $allBookings = [
     [
         'id' => 1,
         'date' => date('Y-m-15'), // 15th of current month
         'roomId' => 1,
-        'roomName' => 'Lokal A',
+        'roomName' => 'Wilmer 1',
         'startTime' => '10:00',
         'endTime' => '11:00',
         'duration' => 60,
         'userFirstname' => 'Anna',
+        'userLastname' => 'Andersson',
         'associationId' => 1,
         'associationName' => 'Förening A'
     ],
@@ -45,11 +44,12 @@ $allBookings = [
         'id' => 2,
         'date' => date('Y-m-15'), // Same day, different room
         'roomId' => 2,
-        'roomName' => 'Lokal B',
+        'roomName' => 'Wilmer 2',
         'startTime' => '14:00',
-        'endTime' => '15:30',
-        'duration' => 90,
+        'endTime' => '15:00',
+        'duration' => 60,
         'userFirstname' => 'Erik',
+        'userLastname' => 'Eriksson',
         'associationId' => 2,
         'associationName' => 'Förening B'
     ],
@@ -57,11 +57,12 @@ $allBookings = [
         'id' => 3,
         'date' => date('Y-m-20'), // 20th of current month
         'roomId' => 1,
-        'roomName' => 'Lokal A',
-        'startTime' => '09:00',
-        'endTime' => '10:00',
+        'roomName' => 'Wilmer 1',
+        'startTime' => '11:00',
+        'endTime' => '12:00',
         'duration' => 60,
         'userFirstname' => 'Maria',
+        'userLastname' => 'Svensson',
         'associationId' => 1,
         'associationName' => 'Förening A'
     ]
@@ -73,19 +74,8 @@ $filteredBookings = array_filter($allBookings, function($booking) use ($year, $m
     return date('Y', $bookingDate) == $year && date('n', $bookingDate) == $month;
 });
 
-// If user (not admin), only show their bookings
-if ($_SESSION['role'] === 'user' && isset($_SESSION['associationId'])) {
-    $filteredBookings = array_filter($filteredBookings, function($booking) {
-        return $booking['associationId'] === $_SESSION['associationId'];
-    });
-}
-
 // Re-index array to ensure proper JSON encoding
 $filteredBookings = array_values($filteredBookings);
 
-sendJsonResponse([
-    'success' => true,
-    'bookings' => $filteredBookings,
-    'year' => $year,
-    'month' => $month
-]);
+// Return array directly (not wrapped in object) for easier frontend consumption
+sendJsonResponse($filteredBookings);

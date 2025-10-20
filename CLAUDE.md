@@ -4,60 +4,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Projektöversikt
 
-Ett webbaserat bokningssystem där föreningar kan boka tider i lokaler. Systemet har användarinloggning med föreningskoder och ett adminpanel för hantering av föreningar och deras koder.
+Ett webbaserat bokningssystem där handikappföreningar kan boka tider i lokaler. Systemet prioriterar tillgänglighet (WCAG 2.1) med särskild hänsyn till skärmläsaranvändare.
 
 ## Teknisk Stack
 
-**Backend**: PHP 8.x + MySQL 8.0+ | RESTful JSON API | Session-based auth eller JWT
-**Frontend**: React 18 + TypeScript + Vite | Tailwind CSS | react-router-dom
-**Utveckling**: json-server för mock API
+**Backend**: PHP 8.x + MySQL 8.0+ | RESTful JSON API | Session-based auth
+**Frontend**: React 19 + TypeScript + Vite | Tailwind CSS 4 | react-router-dom
+**Utveckling**: json-server för mock API under utveckling
 
-## Snabbkommandon
+## Utvecklingskommandon
 
-### Initial Setup (Sprint 1)
+### Frontend Development
 ```bash
-# Frontend setup
-npm create vite@latest frontend -- --template react-ts
-cd frontend
-npm install
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-npm install react-router-dom
-
-# Tailwind CSS konfiguration
-# Uppdatera tailwind.config.js content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"]
-# Lägg till Tailwind directives i src/index.css
-
-# Mock API setup
-npm install -D json-server
-# Skapa db.json med mock data (se struktur nedan)
-npx json-server --watch db.json --port 3001
-
-# Starta utvecklingsserver
-npm run dev  # Kör på localhost:5173
+# Från frontend/ katalog
+npm install          # Installera dependencies
+npm run dev          # Starta Vite dev server (localhost:5173)
+npm run build        # TypeScript + Vite build
+npm run lint         # ESLint kontroll
+npm run mock-api     # Starta json-server (localhost:3001)
 ```
 
-### Backend Setup
+### Backend Development
 ```bash
-# MySQL databas
+# MySQL setup
 mysql -u root -p
 CREATE DATABASE kanban_booking;
-USE kanban_booking;
 SOURCE backend/sql/schema.sql;
 
-# PHP server (från backend-mappen)
+# PHP server (från backend/ katalog)
 php -S localhost:8000 -t .
+
+# Testa API endpoint
+bash test-booking.sh  # Kör alla API-tester
 ```
 
-### Testa API
+### API Testing Examples
 ```bash
-# Login test
+# Login
 curl -X POST http://localhost:8000/api/login.php \
   -H "Content-Type: application/json" \
   -d '{"code": "ABC123"}'
 
-# Hämta bokningar
-curl http://localhost:8000/api/getBookings.php?year=2025&month=11
+# Skapa bokning (kräver session cookie från login)
+curl -b /tmp/cookies.txt -X POST http://localhost:8000/api/createBooking.php \
+  -H "Content-Type: application/json" \
+  -d '{"date":"2025-11-15","roomId":1,"startTime":"10:00","duration":60,"userFirstname":"Anna","associationId":1}'
 ```
 
 ## Projektstruktur
@@ -66,266 +57,150 @@ curl http://localhost:8000/api/getBookings.php?year=2025&month=11
 handicapp-booking/
 ├── backend/
 │   ├── api/
-│   │   ├── index.php                         # Central router
-│   │   ├── login.php                         # POST: Autentisering för users/admin
-│   │   ├── getBookings.php                   # GET: Hämta bokningar för månad
-│   │   ├── createBooking.php                 # POST: Skapa ny bokning
-│   │   └── admin/
-│   │       ├── getAssociations.php           # GET: Lista föreningar (Bearer auth)
-│   │       └── updateAssociationPassword.php # POST: Uppdatera föreningskod
+│   │   ├── login.php              # POST: Session-based auth (users + admin)
+│   │   ├── getBookings.php        # GET: Hämta bokningar för månad
+│   │   ├── createBooking.php      # POST: Skapa bokning med validering
+│   │   └── admin/                 # Bearer auth required
 │   ├── config/
-│   │   ├── config.php                        # PDO databas + CORS (localhost:5173)
-│   │   └── auth.php                          # Auth helpers (session/JWT)
+│   │   ├── config.php             # PDO connection + CORS + env vars
+│   │   └── auth.php               # Auth helpers
 │   └── sql/
-│       └── schema.sql                        # Databas-schema med initiala data
+│       └── schema.sql             # 4 tables: associations, admin_credentials, rooms, bookings
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Login.tsx                     # Centrerad login-box, Tailwind styled
-│   │   │   ├── CalendarView.tsx              # Månadsöversikt, 7-kolumn grid
-│   │   │   ├── ScheduleView.tsx              # Dagsschema med timeslots
-│   │   │   ├── BookingModal.tsx              # Bokningsformulär
-│   │   │   └── AdminPage.tsx                 # Admin: lista/uppdatera föreningar
+│   │   │   ├── Login.tsx          # ARIA-enhanced login (se TILLGÄNGLIGHET.md)
+│   │   │   ├── CalendarView.tsx   # Månadsvy med tillgänglighetsmarkering
+│   │   │   └── calendar/          # Modular kalenderkomponenter
 │   │   ├── contexts/
-│   │   │   └── AuthContext.tsx               # Global auth state (role, token, associationId)
-│   │   ├── App.tsx                           # Router setup
-│   │   └── main.tsx                          # Entry point
-│   ├── db.json                               # Mock data för json-server
-│   ├── .env.development                      # VITE_API_URL=http://localhost:3001
-│   └── .env.production                       # VITE_API_URL=production-url
-└── CLAUDE.md
+│   │   │   └── AuthContext.tsx    # Global auth: role, associationId, associationName
+│   │   └── App.tsx                # Router: /, /calendar, /schedule/:date, /admin
+│   └── package.json               # Scripts: dev, build, lint, mock-api
+├── test-booking.sh                # Automated API test suite
+├── TILLGÄNGLIGHET.md              # WCAG 2.1 compliance documentation
+└── style.md                       # CSS reference för design system
 ```
 
-## Arkitektur & Designmönster
+## Arkitektur
 
-### Backend: PHP API Pattern
-- **Central Router**: `api/index.php` dirigerar requests till rätt endpoint
-- **PDO**: Databas-access med prepared statements
-- **CORS**: Headers tillåter `localhost:5173` (Vite dev server)
-- **Error Handling**: try-catch med JSON-felmeddelanden
-- **Auth**: `password_hash()` / `password_verify()` för lösenord, Bearer token för admin
+### Backend: PHP API Design
+- **Session-based Auth**: PHP sessions för user auth, Bearer token för admin endpoints
+- **PDO**: Prepared statements för SQL-injection skydd
+- **CORS**: Configurerat för Vite dev server (localhost:5173)
+- **Modular Validation**: Separation av concerns i createBooking.php:
+  - `validateBookingData()` - Field validation
+  - `validateDate()` - Business logic (no past dates)
+  - `validateBusinessHours()` - Time constraints (09:00-17:00)
+  - `validateNoOverlap()` - Conflict detection
+- **Error Handling**: Consistent JSON responses med HTTP status codes
 
-### Frontend: React Architecture
-- **Auth Flow**: `AuthContext` → protected routes → role-based navigation (`/calendar` eller `/admin`)
-- **State Management**: React Context för auth, useState för lokal state
-- **Routing**: react-router-dom med protected routes baserat på auth state
-- **API Integration**: Fetch mot backend API, miljövariabler via import.meta.env.VITE_API_URL
-- **Styling**: Tailwind utility classes, responsive design
+### Frontend: React + TypeScript Pattern
+- **Auth Context**: Central state för authentication (role, associationId, associationName)
+- **Protected Routes**: `ProtectedRoute` wrapper validerar auth innan rendering
+- **Role-based Navigation**: Users → /calendar, Admin → /admin
+- **Environment Variables**: `import.meta.env.VITE_API_URL` för API base URL
+- **CSS Modules**: Component-scoped styles (*.module.css)
+- **Accessibility-first**: ARIA attributes, semantic HTML, WCAG 2.1 AA compliance (se TILLGÄNGLIGHET.md)
 
-### Dataflöde
-```
-User → Login.tsx → POST /api/login.php → AuthContext (update state)
-     → Navigate to /calendar (user) eller /admin (admin)
+### Critical Data Flows
+1. **Login Flow**: Login.tsx → POST /api/login.php → Session cookie → AuthContext update → Role-based redirect
+2. **Booking Flow**: CalendarView → Select date → (Future: ScheduleView) → POST /api/createBooking.php → Validation → DB insert
+3. **Admin Flow**: Admin login → Bearer token → GET/POST /api/admin/* endpoints
 
-User → CalendarView → GET /api/getBookings.php?year=X&month=Y
-     → Render grid med visuell feedback (grön=ledig, röd=fullbokad)
-     → Click dag → Navigate to /schedule/:date
-
-User → ScheduleView → Click timeslot → BookingModal
-     → Submit → POST /api/createBooking.php → Uppdatera UI
-
-Admin → AdminPage → GET /api/admin/getAssociations.php (Bearer token)
-      → Update kod → POST /api/admin/updateAssociationPassword.php
-```
-
-## API Specifikationer
+## API Kontrakt
 
 ### POST /api/login.php
-```json
-Request: { "code": "ABC123" }
-Response (user): { "success": true, "role": "user", "associationId": 1, "associationName": "Förening A" }
-Response (admin): { "success": true, "role": "admin" }
-Response (fail): { "success": false, "error": "Invalid code" }
-```
-
-### GET /api/getBookings.php?year=2025&month=11
-```json
-Response: [
-  {
-    "id": 1, "date": "2025-11-15", "roomId": 1, "roomName": "Lokal A",
-    "startTime": "10:00", "endTime": "11:00", "duration": 60,
-    "userFirstname": "Anna", "associationId": 1, "associationName": "Förening A"
-  }
-]
-```
+**Auth**: None
+**Request**: `{ "code": "ABC123" }`
+**Response**:
+- User: `{ "success": true, "role": "user", "associationId": 1, "associationName": "Förening A" }`
+- Admin: `{ "success": true, "role": "admin" }`
+- Fail: `{ "success": false, "error": "Invalid code" }` (400)
 
 ### POST /api/createBooking.php
-```json
-Request: { "date": "2025-11-15", "roomId": 1, "startTime": "10:00", "duration": 60, "userFirstname": "Anna", "associationId": 1 }
-Response (success): { "success": true, "booking": { "id": 123, ... } }
-Response (fail): { "success": false, "error": "Time slot already booked" }
+**Auth**: Session cookie required
+**Request**: `{ "date": "2025-11-15", "roomId": 1, "startTime": "10:00", "duration": 60, "userFirstname": "Anna", "associationId": 1 }`
+**Validation Rules**:
+- `date`: YYYY-MM-DD format, not in past
+- `startTime`: HH:MM format, between 09:00-17:00
+- `duration`: Must be 30, 60, 90, or 120 minutes
+- `userFirstname`: Minimum 2 characters
+- No time slot overlap with existing bookings
 
-Valideringar:
-- Datum inte i förflutet
-- Rum existerar
-- Ingen överlappning med andra bokningar
-- StartTime inom öppettider (09:00-17:00)
-- Duration: 30, 60, 90, eller 120 minuter
-```
+**Response**:
+- Success: `{ "success": true, "booking": {...}, "message": "Booking created successfully" }` (201)
+- Fail: `{ "success": false, "error": "Cannot book dates in the past" }` (400/409)
 
-### GET /api/admin/getAssociations.php
-```
-Headers: Authorization: Bearer SECRET_API_KEY
-Response: [{ "id": 1, "name": "Förening A", "createdAt": "2025-01-01" }]
-```
+### GET /api/getBookings.php?year=2025&month=11
+**Auth**: None
+**Response**: Array of bookings med room/association names joined
 
-### POST /api/admin/updateAssociationPassword.php
-```json
-Headers: Authorization: Bearer SECRET_API_KEY
-Request: { "associationId": 1, "newPassword": "NEW123" }
-Response: { "success": true, "message": "Password updated successfully" }
-```
+### Admin Endpoints (Bearer Auth Required)
+- **GET /api/admin/getAssociations.php**: Lista föreningar
+- **POST /api/admin/updateAssociationPassword.php**: Uppdatera föreningskod
 
 ## Databas Schema
 
-```sql
--- 4 tabeller: associations, admin_credentials, rooms, bookings
+**4 Tables**: associations, admin_credentials, rooms, bookings
 
-CREATE TABLE associations (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  code_hash VARCHAR(255) NOT NULL,  -- password_hash() result
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+**Key Relationships**:
+- `bookings.room_id` → `rooms.id` (CASCADE)
+- `bookings.association_id` → `associations.id` (CASCADE)
+- `associations.code_hash` uses `password_hash()` (bcrypt)
+- `admin_credentials` enforces single admin (CHECK id = 1)
 
-CREATE TABLE admin_credentials (
-  id INT PRIMARY KEY DEFAULT 1,
-  password_hash VARCHAR(255) NOT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CHECK (id = 1)  -- Endast en admin
-);
-
-CREATE TABLE rooms (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  capacity INT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE bookings (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  date DATE NOT NULL,
-  room_id INT NOT NULL,
-  start_time TIME NOT NULL,
-  duration INT NOT NULL COMMENT 'Duration in minutes',
-  user_firstname VARCHAR(50) NOT NULL,
-  association_id INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE,
-  FOREIGN KEY (association_id) REFERENCES associations(id) ON DELETE CASCADE,
-  INDEX idx_date_room (date, room_id),
-  INDEX idx_association (association_id)
-);
-```
-
-## Mock Data (db.json för json-server)
-
-```json
-{
-  "bookings": [
-    {
-      "id": 1,
-      "date": "2025-11-15",
-      "roomId": 1,
-      "startTime": "10:00",
-      "duration": 60,
-      "userFirstname": "Anna",
-      "associationId": 1
-    }
-  ],
-  "associations": [
-    { "id": 1, "name": "Förening A", "code": "ABC123" }
-  ],
-  "rooms": [
-    { "id": 1, "name": "Lokal A", "capacity": 20 }
-  ]
-}
-```
+**Important Indexes**:
+- `idx_date_room` on bookings(date, room_id) - overlap detection performance
+- `idx_association` on bookings(association_id) - association lookup
 
 ## Miljövariabler
 
-### Backend (.env eller direkt i config.php)
-```env
+### Backend (config.php läser från env)
+```bash
 DB_HOST=localhost
 DB_NAME=kanban_booking
 DB_USER=root
 DB_PASS=your_password
 ADMIN_API_KEY=your-secret-admin-key-here
-JWT_SECRET=your-jwt-secret-here (optional)
+ALLOWED_ORIGIN=http://localhost:5173  # CORS
 ```
 
-### Frontend
-```env
-# .env.development
-VITE_API_URL=http://localhost:3001
-VITE_ADMIN_TOKEN=dev-secret-123
-
-# .env.production
-VITE_API_URL=http://yourdomain.com/backend/api
-VITE_ADMIN_TOKEN=production-secret-xyz
+### Frontend (.env.development / .env.production)
+```bash
+VITE_API_URL=http://localhost:3001      # Mock API under utveckling
+VITE_API_URL=http://localhost:8000/api  # Real backend
 ```
 
-## Sprint-plan (Referens)
+## Viktiga Utvecklingsmönster
 
-1. **Sprint 1**: Projektgrund & Arkitektur (1-2 dagar)
-   - Skapa mappar, PHP API-struktur, React Vite setup, Tailwind, Router, Mock API
+### PHP Backend Pattern
+```php
+// Modular validation (se createBooking.php)
+$validationResult = validateBookingData($data);
+if (!$validationResult['valid']) {
+    sendErrorResponse($validationResult['error'], 400);
+}
 
-2. **Sprint 2**: Autentisering (2-3 dagar)
-   - DB-schema, login.php, Login.tsx, AuthContext, Protected routes
+// Session auth check
+session_start();
+if (!isset($_SESSION['authenticated'])) {
+    sendErrorResponse('Unauthorized', 401);
+}
+```
 
-3. **Sprint 3**: Kalendervy (2-3 dagar)
-   - getBookings.php, CalendarView, månadsnavigering, visuell feedback
-
-4. **Sprint 4**: Dagsschema & Bokning (3-4 dagar)
-   - createBooking.php, validering, ScheduleView, BookingModal
-
-5. **Sprint 5**: Adminpanel (2-3 dagar)
-   - Admin endpoints, säkerhet, AdminPage, lista/uppdatera föreningar
-
-## Utvecklingsriktlinjer
-
-### Säkerhet
-- Backend: Använd `password_hash()` och `password_verify()` för lösenord
-- Admin endpoints: Validera Bearer token mot miljövariabel
-- CORS: Endast tillåt localhost:5173 i utveckling
-- Input validering: Sanitera och validera alla inputs server-side
-
-### Routing
-- `/` - Login (public)
-- `/calendar` - Kalendervy (protected, user/admin)
-- `/schedule/:date` - Dagsschema (protected, user/admin)
-- `/admin` - Adminpanel (protected, admin only)
-
-### React Komponenter
-- **Login.tsx**: Centrerad login-box, error/loading states, Tailwind styled
-- **CalendarView.tsx**: 7-kolumn grid (Mån-Sön), prev/next månadsnavigering, visuell feedback för status
-- **ScheduleView.tsx**: Timeslots (09:00-17:00, 30min intervall), rum-kolumner, klickbara lediga slots
-- **BookingModal.tsx**: Form med förnamn, rum (dropdown), varaktighet (select), submit → POST createBooking
-- **AdminPage.tsx**: Lista föreningar, input för ny kod, uppdatera-knapp, logout
-
-### Styling
-- Tailwind CSS utility classes
-- Responsive design (mobile-first)
-- Visual indicators: Grön=ledig, Röd/Orange=fullbokad, Grå=förflutet/disabled
-- Hover-effekter på klickbara element
-
-## Vanliga Patterns
-
-### Fetch från Frontend
+### React Fetch Pattern
 ```typescript
 const apiUrl = import.meta.env.VITE_API_URL;
-const response = await fetch(`${apiUrl}/api/login.php`, {
+const response = await fetch(`${apiUrl}/api/endpoint.php`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ code: userCode })
+  credentials: 'include',  // Send session cookie
+  body: JSON.stringify(data)
 });
-const data = await response.json();
 ```
 
-### Protected Route Pattern
+### Protected Route Usage
 ```typescript
-// I App.tsx
 <Route path="/calendar" element={
   <ProtectedRoute>
     <CalendarView />
@@ -333,56 +208,48 @@ const data = await response.json();
 } />
 ```
 
-### Auth Context Pattern
-```typescript
-const { authState, setAuthState } = useAuth();
-// authState: { isAuthenticated: boolean, role: 'user' | 'admin', associationId?: number }
+## Tillgänglighet (WCAG 2.1 AA)
+
+**Implemented** (Sprint 2):
+- ARIA labels på formulär (`aria-label`, `aria-required`, `aria-invalid`)
+- `role="alert"` för felmeddelanden
+- `aria-live` regioner för dynamiska uppdateringar
+- Semantisk HTML (main, region, form)
+- High contrast: #005A9C on white (8.59:1)
+
+**Planned** (Sprint 3-5):
+- Tangentbordsnavigation (pilar, tab) för kalender
+- Focus management för modals
+- Screen reader announcements för state changes
+
+Se **TILLGÄNGLIGHET.md** för fullständig dokumentation.
+
+## Kodkvalitet & Säkerhet
+
+### Säkerhet
+- **SQL Injection**: PDO prepared statements obligatoriska
+- **XSS**: JSON encoding för alla API responses
+- **CSRF**: Session-based auth med SameSite cookies
+- **Input Validation**: Server-side validation i modulariserade funktioner
+
+### Code Organization
+- **Backend**: Separation of concerns (validation, business logic, data access)
+- **Frontend**: Component-scoped CSS modules, TypeScript för type safety
+- **Testing**: `test-booking.sh` för automated API testing
+
+## Git Workflow
+
+**Current Branch**: feat/booking-component
+**Main Branch**: main (används för PRs)
+
+**Commit Style**:
 ```
+Epic X: Brief description
 
-## Git Strategi
-
-### Branch-struktur
+- Bullet point details if needed
 ```
-main → develop → feature/epic1-foundation
-              → feature/epic2-auth
-              → feature/epic3-calendar
-              → feature/epic4-booking
-              → feature/epic5-admin
-```
-
-### Commit-meddelanden
-```
-Epic 1: Create basic PHP API structure
-Epic 1: Setup React Vite with TypeScript
-Epic 2: Implement login endpoint
-Epic 2: Create Login component with Tailwind
-Epic 3: Add CalendarView with month navigation
-```
-
-## Testning
-
-### Backend
-- Postman/Insomnia för manuella API-tester
-- Testa alla endpoints med olika inputs (success/fail cases)
-
-### Frontend
-- Manuell browser-testning
-- Testa alla user flows: login → calendar → schedule → booking
-- Testa admin flow: login → admin → uppdatera kod
-- Testa error states och edge cases
-
-## Framtida Features (Backlog)
-
-- Email-bekräftelse vid bokning
-- Radera/ändra bokning
-- Återkommande bokningar
-- Exportera bokningar till PDF
-- Statistik över bokningar per förening
-- Notiser för admin vid ny bokning
-- Multi-språk support (Svenska/Engelska)
-- Dark mode
 
 ---
 
-**Version**: 1.0
-**Status**: 🚀 Redo att börja implementera
+**Status**: Sprint 3 (Kalendervy) pågående
+**Senaste**: CalendarView implementerad med månadsnavigering

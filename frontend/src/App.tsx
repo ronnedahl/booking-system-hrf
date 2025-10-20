@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Login from './components/Login'
 import CalendarView from './components/CalendarView'
+import ScheduleView from './components/ScheduleView'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { authState } = useAuth()
@@ -61,9 +62,8 @@ function CalendarPage() {
   )
 }
 
-function SchedulePlaceholder() {
+function SchedulePage() {
   const { authState, logout } = useAuth()
-  const navigate = useNavigate()
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
@@ -103,23 +103,8 @@ function SchedulePlaceholder() {
         </div>
       </nav>
 
-      <main style={{ maxWidth: '900px', margin: '2rem auto', backgroundColor: '#FFFFFF', padding: '2rem', borderRadius: '8px', border: '1px solid #DEE2E6', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <h2 style={{ color: '#005A9C', marginBottom: '1rem' }}>Schemavy</h2>
-          <p style={{ color: '#6C757D', marginBottom: '1.5rem' }}>Schemat kommer i Sprint 4</p>
-          <button
-            onClick={() => navigate('/calendar')}
-            style={{
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#F1F3F5',
-              border: '1px solid #DEE2E6',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            ← Tillbaka till kalender
-          </button>
-        </div>
+      <main style={{ maxWidth: '1200px', margin: '2rem auto', backgroundColor: '#FFFFFF', padding: '2rem', borderRadius: '8px', border: '1px solid #DEE2E6', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}>
+        <ScheduleView />
       </main>
     </div>
   )
@@ -181,7 +166,7 @@ function AppRoutes() {
 
       <Route path="/schedule/:date" element={
         <ProtectedRoute>
-          <SchedulePlaceholder />
+          <SchedulePage />
         </ProtectedRoute>
       } />
 
