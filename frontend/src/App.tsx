@@ -15,97 +15,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function CalendarPage() {
-  const { authState, logout } = useAuth()
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
-      <nav style={{ backgroundColor: '#FFFFFF', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', height: '4rem', alignItems: 'center' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#005A9C', margin: 0 }}>
-              Bokningssystem Konferens
-            </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {authState.role === 'user' && (
-                <span style={{ fontSize: '0.875rem', color: '#6C757D' }}>
-                  {authState.associationName}
-                </span>
-              )}
-              {authState.role === 'admin' && (
-                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#005A9C' }}>
-                  Admin
-                </span>
-              )}
-              <button
-                onClick={logout}
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  backgroundColor: '#6C757D',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Logga ut
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main style={{ maxWidth: '900px', margin: '2rem auto', backgroundColor: '#FFFFFF', padding: '2rem', borderRadius: '8px', border: '1px solid #DEE2E6', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}>
-        <CalendarView />
-      </main>
+      <CalendarView />
     </div>
   )
 }
 
 function SchedulePage() {
-  const { authState, logout } = useAuth()
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
-      <nav style={{ backgroundColor: '#FFFFFF', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', height: '4rem', alignItems: 'center' }}>
-            <h1 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#005A9C', margin: 0 }}>
-              Bokningssystem Konferens
-            </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {authState.role === 'user' && (
-                <span style={{ fontSize: '0.875rem', color: '#6C757D' }}>
-                  {authState.associationName}
-                </span>
-              )}
-              {authState.role === 'admin' && (
-                <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#005A9C' }}>
-                  Admin
-                </span>
-              )}
-              <button
-                onClick={logout}
-                style={{
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  backgroundColor: '#6C757D',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Logga ut
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main style={{ maxWidth: '1200px', margin: '2rem auto', backgroundColor: '#FFFFFF', padding: '2rem', borderRadius: '8px', border: '1px solid #DEE2E6', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)' }}>
-        <ScheduleView />
-      </main>
+      <ScheduleView />
     </div>
   )
 }
