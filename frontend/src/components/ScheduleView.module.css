@@ -2,14 +2,28 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 1rem;
+  padding-top: 90px;
 }
 
 .header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
+}
+
+.instructionText {
+  text-align: center;
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 1.5rem;
+  background-color: #E6F0F6;
+  border-left: 4px solid #005A9C;
+  border-radius: 6px;
+  color: #212529;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 .header h2 {
@@ -83,23 +97,26 @@
   text-align: center;
   min-height: 60px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.3rem;
 }
 
 .slot.free {
-  background-color: #FFFFFF;
-  color: #005A9C;
+  background-color: #198754;
+  color: #FFFFFF;
+  border: 2px solid #146C43;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .slot.free:hover {
-  background-color: #E6F0F6;
-  border-color: #005A9C;
+  background-color: #146C43;
+  border-color: #0F5132;
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 90, 156, 0.15);
+  box-shadow: 0 4px 12px rgba(21, 135, 84, 0.3);
 }
 
 .slot.free:focus-visible {
@@ -117,11 +134,24 @@
 }
 
 .slot.blocked {
-  background-color: #FAFAFA;
-  border-style: dashed;
-  color: #ADB5BD;
+  background-color: #F8F9FA;
+  border: 2px dashed #ADB5BD;
+  color: #6C757D;
   cursor: not-allowed;
   font-size: 0.85rem;
+}
+
+.statusIconSchedule {
+  font-size: 1.2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.blockedIcon {
+  font-size: 1.3rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #DC3545;
 }
 
 .bookingInfo {
@@ -151,6 +181,17 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+    padding-top: 80px;
+  }
+
+  .instructionText {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+  }
+
   .scheduleGrid {
     grid-template-columns: 60px repeat(2, 1fr);
     gap: 0.25rem;
@@ -170,6 +211,15 @@
     padding: 0.8rem 0.25rem;
     font-size: 0.85rem;
     min-height: 50px;
+    gap: 0.2rem;
+  }
+
+  .statusIconSchedule {
+    font-size: 1rem;
+  }
+
+  .blockedIcon {
+    font-size: 1.1rem;
   }
 
   .bookingName {
@@ -182,6 +232,15 @@
 }
 
 @media (min-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .instructionText {
+    font-size: 1.05rem;
+    padding: 1rem 1.5rem;
+  }
+
   .scheduleGrid {
     gap: 1rem;
   }
@@ -189,5 +248,14 @@
   .slot {
     padding: 1.5rem 1rem;
     font-size: 1.1rem;
+    gap: 0.4rem;
+  }
+
+  .statusIconSchedule {
+    font-size: 1.4rem;
+  }
+
+  .blockedIcon {
+    font-size: 1.5rem;
   }
 }

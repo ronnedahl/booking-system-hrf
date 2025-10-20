@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import BookingModal from './BookingModal'
+import OrganizationNav from './OrganizationNav'
 import styles from './ScheduleView.module.css'
 
 interface TimeSlot {
@@ -169,13 +170,22 @@ function ScheduleView() {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <button onClick={() => navigate('/calendar')} className={styles.backButton}>
-          ← Tillbaka till kalender
-        </button>
-        <h2>{date ? formatDate(date) : 'Schema'}</h2>
-      </div>
+    <>
+      {/* Organization Navigation Bar */}
+      <OrganizationNav organizationName={authState.associationName || 'Okänd förening'} />
+
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <button onClick={() => navigate('/calendar')} className={styles.backButton}>
+            ← Tillbaka till kalender
+          </button>
+          <h2>{date ? formatDate(date) : 'Schema'}</h2>
+        </div>
+
+        {/* Instruction text */}
+        <div className={styles.instructionText}>
+          <strong>Grön (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd (✗)</strong> = Bokad | <strong>Grå (⊘)</strong> = Stängt
+        </div>
 
       <div className={styles.scheduleGrid}>
         {/* Header row */}
@@ -202,7 +212,8 @@ function ScheduleView() {
                     className={`${styles.slot} ${styles.blocked}`}
                     title="Ej bokningsbar tid"
                   >
-                    Stängt
+                    <span className={styles.blockedIcon} aria-hidden="true">⊘</span>
+                    <span>Stängt</span>
                   </div>
                 )
               }
@@ -214,6 +225,7 @@ function ScheduleView() {
                     className={`${styles.slot} ${styles.booked}`}
                     title={`Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}`}
                   >
+                    <span className={styles.statusIconSchedule} aria-hidden="true">✗</span>
                     <div className={styles.bookingInfo}>
                       <div className={styles.bookingName}>
                         {booking.userFirstname} {booking.userLastname}
@@ -233,7 +245,8 @@ function ScheduleView() {
                   onClick={() => handleSlotClick(schedule.roomId, schedule.roomName, slot.time, slot.hour)}
                   aria-label={`Boka ${schedule.roomName} klockan ${slot.time}`}
                 >
-                  Ledig
+                  <span className={styles.statusIconSchedule} aria-hidden="true">✓</span>
+                  <span>Ledig</span>
                 </button>
               )
             })}
@@ -254,7 +267,8 @@ function ScheduleView() {
           onSuccess={handleBookingSuccess}
         />
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
