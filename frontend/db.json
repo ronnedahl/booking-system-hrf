@@ -2,30 +2,42 @@
   "bookings": [
     {
       "id": 1,
-      "date": "2025-11-15",
+      "date": "2025-10-15",
       "roomId": 1,
+      "roomName": "Wilmer 1",
       "startTime": "10:00",
+      "endTime": "11:00",
       "duration": 60,
       "userFirstname": "Anna",
-      "associationId": 1
+      "userLastname": "Andersson",
+      "associationId": 1,
+      "associationName": "Förening A"
     },
     {
       "id": 2,
-      "date": "2025-11-15",
-      "roomId": 1,
+      "date": "2025-10-15",
+      "roomId": 2,
+      "roomName": "Wilmer 2",
       "startTime": "14:00",
-      "duration": 90,
+      "endTime": "15:00",
+      "duration": 60,
       "userFirstname": "Erik",
-      "associationId": 2
+      "userLastname": "Eriksson",
+      "associationId": 2,
+      "associationName": "Förening B"
     },
     {
       "id": 3,
-      "date": "2025-11-16",
-      "roomId": 2,
-      "startTime": "09:00",
-      "duration": 120,
+      "date": "2025-10-20",
+      "roomId": 1,
+      "roomName": "Wilmer 1",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "duration": 60,
       "userFirstname": "Maria",
-      "associationId": 1
+      "userLastname": "Svensson",
+      "associationId": 1,
+      "associationName": "Förening A"
     }
   ],
   "associations": [
@@ -38,18 +50,48 @@
       "id": 2,
       "name": "Förening B",
       "code": "XYZ789"
+    },
+    {
+      "id": 3,
+      "name": "Förening C",
+      "code": "TEST123"
+    },
+    {
+      "id": 4,
+      "name": "Förening D",
+      "code": "TEST123"
+    },
+    {
+      "id": 5,
+      "name": "Förening E",
+      "code": "TEST123"
+    },
+    {
+      "id": 6,
+      "name": "Förening F",
+      "code": "TEST123"
+    },
+    {
+      "id": 7,
+      "name": "Förening G",
+      "code": "TEST123"
+    },
+    {
+      "id": 8,
+      "name": "Förening H",
+      "code": "TEST123"
     }
   ],
   "rooms": [
     {
       "id": 1,
-      "name": "Lokal A",
+      "name": "Wilmer 1",
       "capacity": 20
     },
     {
       "id": 2,
-      "name": "Lokal B",
-      "capacity": 15
+      "name": "Wilmer 2",
+      "capacity": 20
     }
   ]
 }

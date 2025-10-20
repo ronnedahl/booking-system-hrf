@@ -286,86 +286,73 @@ function timeRangesOverlap($start1, $end1, $start2, $end2) {
 }
 
 /**
- * Get all bookings for a specific date and room
- * NOTE: This uses hardcoded data for now. In production, query database.
+ * Get all bookings for a specific date and room from MySQL database
  */
 function getBookingsForDateAndRoom($date, $roomId) {
-    // Hardcoded bookings (updated for new schema with lastname)
-    $allBookings = [
-        [
-            'id' => 1,
-            'date' => date('Y-m-15'),
-            'roomId' => 1,
-            'startTime' => '10:00',
-            'endTime' => '11:00',
-            'duration' => 60,
-            'userFirstname' => 'Anna',
-            'userLastname' => 'Andersson',
-            'associationId' => 1
-        ],
-        [
-            'id' => 2,
-            'date' => date('Y-m-15'),
-            'roomId' => 2,
-            'startTime' => '14:00',
-            'endTime' => '15:00',
-            'duration' => 60,
-            'userFirstname' => 'Erik',
-            'userLastname' => 'Eriksson',
-            'associationId' => 2
-        ],
-        [
-            'id' => 3,
-            'date' => date('Y-m-20'),
-            'roomId' => 1,
-            'startTime' => '11:00',
-            'endTime' => '12:00',
-            'duration' => 60,
-            'userFirstname' => 'Maria',
-            'userLastname' => 'Svensson',
-            'associationId' => 1
-        ]
-    ];
+    $pdo = getDbConnection();
 
-    // Filter by date and room
-    return array_filter($allBookings, function($booking) use ($date, $roomId) {
-        return $booking['date'] === $date && $booking['roomId'] === $roomId;
-    });
+    $sql = "SELECT
+                id,
+                date,
+                room_id as roomId,
+                start_time as startTime,
+                TIME_FORMAT(ADDTIME(start_time, SEC_TO_TIME(duration * 60)), '%H:%i') as endTime,
+                duration,
+                user_firstname as userFirstname,
+                user_lastname as userLastname,
+                association_id as associationId
+            FROM bookings
+            WHERE date = ? AND room_id = ?
+            ORDER BY start_time";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$date, $roomId]);
+    return $stmt->fetchAll();
 }
 
 /**
- * Create and store booking record
- * NOTE: This uses hardcoded storage. In production, INSERT into database.
+ * Create and store booking record in MySQL database
  */
 function createBookingRecord($data) {
-    // Generate new ID (in production, DB auto-increment)
-    $newId = rand(1000, 9999);
+    $pdo = getDbConnection();
 
-    // Get room name (per booking.md: Wilmer 1 and Wilmer 2)
-    $roomNames = [
-        1 => 'Wilmer 1',
-        2 => 'Wilmer 2'
-    ];
+    $sql = "INSERT INTO bookings
+            (date, room_id, start_time, duration, user_firstname, user_lastname, association_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    $booking = [
-        'id' => $newId,
-        'date' => $data['date'],
-        'roomId' => $data['roomId'],
-        'roomName' => $roomNames[$data['roomId']] ?? 'Unknown Room',
-        'startTime' => $data['startTime'],
-        'endTime' => $data['endTime'],
-        'duration' => $data['duration'],
-        'userFirstname' => $data['userFirstname'],
-        'userLastname' => $data['userLastname'],
-        'associationId' => $data['associationId'],
-        'createdAt' => date('Y-m-d H:i:s')
-    ];
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $data['date'],
+        $data['roomId'],
+        $data['startTime'],
+        $data['duration'],
+        $data['userFirstname'],
+        $data['userLastname'],
+        $data['associationId']
+    ]);
 
-    // In production:
-    // $pdo = getDbConnection();
-    // $stmt = $pdo->prepare("INSERT INTO bookings (date, room_id, start_time, duration, user_firstname, user_lastname, association_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    // $stmt->execute([$data['date'], $data['roomId'], $data['startTime'], $data['duration'], $data['userFirstname'], $data['userLastname'], $data['associationId']]);
-    // $booking['id'] = $pdo->lastInsertId();
+    $bookingId = $pdo->lastInsertId();
 
-    return $booking;
+    // Fetch the created booking with room and association names
+    $sql = "SELECT
+                b.id,
+                b.date,
+                b.room_id as roomId,
+                r.name as roomName,
+                b.start_time as startTime,
+                TIME_FORMAT(ADDTIME(b.start_time, SEC_TO_TIME(b.duration * 60)), '%H:%i') as endTime,
+                b.duration,
+                b.user_firstname as userFirstname,
+                b.user_lastname as userLastname,
+                b.association_id as associationId,
+                a.name as associationName,
+                b.created_at as createdAt
+            FROM bookings b
+            JOIN rooms r ON b.room_id = r.id
+            JOIN associations a ON b.association_id = a.id
+            WHERE b.id = ?";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$bookingId]);
+    return $stmt->fetch();
 }

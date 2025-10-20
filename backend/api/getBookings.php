@@ -24,58 +24,40 @@ if ($month < 1 || $month > 12) {
     sendErrorResponse('Invalid month', 400);
 }
 
-// Hardcoded test bookings (since MySQL not installed)
-// In production: SELECT b.*, r.name as roomName, a.name as associationName FROM bookings b JOIN rooms r ON b.room_id = r.id JOIN associations a ON b.association_id = a.id WHERE YEAR(b.date) = ? AND MONTH(b.date) = ?
-$allBookings = [
-    [
-        'id' => 1,
-        'date' => date('Y-m-15'), // 15th of current month
-        'roomId' => 1,
-        'roomName' => 'Wilmer 1',
-        'startTime' => '10:00',
-        'endTime' => '11:00',
-        'duration' => 60,
-        'userFirstname' => 'Anna',
-        'userLastname' => 'Andersson',
-        'associationId' => 1,
-        'associationName' => 'Förening A'
-    ],
-    [
-        'id' => 2,
-        'date' => date('Y-m-15'), // Same day, different room
-        'roomId' => 2,
-        'roomName' => 'Wilmer 2',
-        'startTime' => '14:00',
-        'endTime' => '15:00',
-        'duration' => 60,
-        'userFirstname' => 'Erik',
-        'userLastname' => 'Eriksson',
-        'associationId' => 2,
-        'associationName' => 'Förening B'
-    ],
-    [
-        'id' => 3,
-        'date' => date('Y-m-20'), // 20th of current month
-        'roomId' => 1,
-        'roomName' => 'Wilmer 1',
-        'startTime' => '11:00',
-        'endTime' => '12:00',
-        'duration' => 60,
-        'userFirstname' => 'Maria',
-        'userLastname' => 'Svensson',
-        'associationId' => 1,
-        'associationName' => 'Förening A'
-    ]
-];
+// Fetch bookings from MySQL database
+try {
+    $pdo = getDbConnection();
 
-// Filter bookings for requested month/year
-$filteredBookings = array_filter($allBookings, function($booking) use ($year, $month) {
-    $bookingDate = strtotime($booking['date']);
-    return date('Y', $bookingDate) == $year && date('n', $bookingDate) == $month;
-});
+    $sql = "SELECT
+                b.id,
+                b.date,
+                b.room_id as roomId,
+                r.name as roomName,
+                b.start_time as startTime,
+                TIME_FORMAT(ADDTIME(b.start_time, SEC_TO_TIME(b.duration * 60)), '%H:%i') as endTime,
+                b.duration,
+                b.user_firstname as userFirstname,
+                b.user_lastname as userLastname,
+                b.association_id as associationId,
+                a.name as associationName
+            FROM bookings b
+            JOIN rooms r ON b.room_id = r.id
+            JOIN associations a ON b.association_id = a.id
+            WHERE YEAR(b.date) = ? AND MONTH(b.date) = ?
+            ORDER BY b.date, b.start_time";
 
-// Re-index array to ensure proper JSON encoding
-$filteredBookings = array_values($filteredBookings);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$year, $month]);
+    $filteredBookings = $stmt->fetchAll();
 
-// Return array directly (not wrapped in object) for easier frontend consumption
-sendJsonResponse($filteredBookings);
+} catch (PDOException $e) {
+    sendErrorResponse('Database error: ' . $e->getMessage(), 500);
+}
+
+// Return with success wrapper for frontend compatibility
+sendJsonResponse([
+    'success' => true,
+    'bookings' => $filteredBookings,
+    'year' => $year,
+    'month' => $month
+]);

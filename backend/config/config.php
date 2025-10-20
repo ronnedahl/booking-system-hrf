@@ -1,9 +1,41 @@
 <?php
+// Load environment variables from .env file
+function loadEnv($path) {
+    if (!file_exists($path)) {
+        return;
+    }
+
+    $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // Skip comments
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+
+        // Parse KEY=VALUE
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+
+            // Remove quotes if present
+            $value = trim($value, '"\'');
+
+            // Set environment variable
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+        }
+    }
+}
+
+// Load .env file from backend directory
+loadEnv(__DIR__ . '/../.env');
+
 // Database configuration
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_NAME', getenv('DB_NAME') ?: 'kanban_booking');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_USER', getenv('DB_USER') ?: 'booking_user');
+define('DB_PASS', getenv('DB_PASS') ?: 'booking_pass123');
 
 // Admin API key
 define('ADMIN_API_KEY', getenv('ADMIN_API_KEY') ?: 'dev-secret-key-change-in-production');

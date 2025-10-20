@@ -82,7 +82,8 @@ function ScheduleView() {
         throw new Error('Failed to fetch bookings')
       }
 
-      const allBookings: Booking[] = await response.json()
+      const data = await response.json()
+      const allBookings: Booking[] = data.bookings || []
 
       // Filter bookings for this specific date
       const dateBookings = allBookings.filter(b => b.date === date)
