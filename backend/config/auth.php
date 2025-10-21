@@ -1,7 +1,22 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Verify admin Bearer token
+// Verify admin session (used for admin panel endpoints)
+function verifyAdminSession() {
+    session_start();
+
+    if (!isset($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
+        sendErrorResponse('Not authenticated', 401);
+    }
+
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        sendErrorResponse('Admin access required', 403);
+    }
+
+    return true;
+}
+
+// Verify admin Bearer token (legacy, kept for API key access)
 function verifyAdminToken() {
     $headers = getallheaders();
     $authHeader = $headers['Authorization'] ?? '';

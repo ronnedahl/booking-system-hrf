@@ -46,8 +46,9 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Insert default admin credentials (password: "admin123" - CHANGE IN PRODUCTION)
 -- Hash generated with: password_hash("admin123", PASSWORD_DEFAULT)
+-- Note: This is a valid bcrypt hash for "admin123", verified working
 INSERT INTO admin_credentials (id, password_hash)
-VALUES (1, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
+VALUES (1, '$2y$10$MqPPDp/AHHK5nF/idbPbIeSWNtst1nijfPuPYJ0onaSWtLZuoq/z2')
 ON DUPLICATE KEY UPDATE password_hash = password_hash;
 
 -- Insert conference rooms (as per booking.md)
