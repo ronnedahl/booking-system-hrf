@@ -184,8 +184,8 @@ function ScheduleView() {
         </div>
 
         {/* Instruction text */}
-        <div className={styles.instructionText} role="note" aria-label="Förklaring av färgkodning i schemat">
-          <strong>Grön (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd (✗)</strong> = Bokad | <strong>Grå (⊘)</strong> = Stängt
+        <div className={styles.instructionText} role="note" aria-label="Förklaring av symboler i schemat">
+          <strong>Svart ram (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd ram (✗)</strong> = Bokad | <strong>Grå (⊘)</strong> = Stängt
         </div>
 
       <div className={styles.scheduleGrid} role="table" aria-label="Dagsschema för bokningsbara lokaler">
