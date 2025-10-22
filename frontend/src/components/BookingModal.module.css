@@ -1,9 +1,16 @@
 .dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
   border: 1px solid #DEE2E6;
   border-radius: 8px;
   padding: 0;
   width: clamp(300px, 90vw, 500px);
   max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -155,6 +162,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
+  .dialog {
+    width: clamp(280px, 95vw, 400px);
+    max-width: 95vw;
+  }
+
   .content {
     padding: 1.5rem;
   }
@@ -172,8 +184,35 @@
   }
 }
 
+@media (min-width: 481px) and (max-width: 767px) {
+  .dialog {
+    width: clamp(400px, 85vw, 500px);
+  }
+}
+
 @media (min-width: 768px) {
   .dialog {
     width: 600px;
+  }
+
+  .content {
+    padding: 2.5rem;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .dialog {
+    max-height: 85vh;
+    top: 50%;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
   }
 }
