@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import BookingModal from './BookingModal'
+import BookingDetailsModal from './BookingDetailsModal'
 import OrganizationNav from './OrganizationNav'
 import styles from './ScheduleView.module.css'
 
@@ -52,8 +53,10 @@ function ScheduleView() {
   const [schedules, setSchedules] = useState<RoomSchedule[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<{ roomId: number; roomName: string; time: string } | null>(null)
   const [showBookingModal, setShowBookingModal] = useState(false)
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
 
   const timeSlots = generateTimeSlots()
 
@@ -141,6 +144,53 @@ function ScheduleView() {
     fetchSchedule() // Refresh schedule
   }
 
+  const handleBookingClick = (booking: Booking) => {
+    setSelectedBooking(booking)
+  }
+
+  const handleBookingDetailsClose = () => {
+    setSelectedBooking(null)
+  }
+
+  const handleDeleteBooking = async (bookingId: number, password: string) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL
+      const response = await fetch(`${apiUrl}/api/deleteBooking.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ bookingId, password })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Kunde inte radera bokningen')
+      }
+
+      setSuccessMessage('Bokningen har raderats')
+      setSelectedBooking(null)
+      await fetchSchedule()
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000)
+
+    } catch (err) {
+      console.error('Error deleting booking:', err)
+      throw err // Re-throw to let modal handle it
+    }
+  }
+
+  const canDeleteBooking = (booking: Booking): boolean => {
+    // Admin can delete any booking
+    if (authState.role === 'admin') return true
+
+    // User can only delete their own association's bookings
+    return authState.associationId === booking.associationId
+  }
+
   const formatDate = (dateStr: string): string => {
     const d = new Date(dateStr + 'T00:00:00')
     return d.toLocaleDateString('sv-SE', {
@@ -183,9 +233,15 @@ function ScheduleView() {
           <h2>{date ? formatDate(date) : 'Schema'}</h2>
         </div>
 
+        {successMessage && (
+          <div className={styles.successMessage} role="alert" aria-live="polite">
+            {successMessage}
+          </div>
+        )}
+
         {/* Instruction text */}
         <div className={styles.instructionText} role="note" aria-label="Förklaring av symboler i schemat">
-          <strong>Svart ram (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd ram (✗)</strong> = Bokad | <strong>Grå (⊘)</strong> = Stängt
+          <strong>Svart ram (✓)</strong> = Ledig tid, klicka för att boka | <strong>Röd ram (✗)</strong> = Bokad, klicka för detaljer | <strong>Grå (⊘)</strong> = Stängt
         </div>
 
       <div className={styles.scheduleGrid} role="table" aria-label="Dagsschema för bokningsbara lokaler">
@@ -223,12 +279,13 @@ function ScheduleView() {
 
               if (booking) {
                 return (
-                  <div
+                  <button
                     key={`${schedule.roomId}-${slot.time}`}
-                    className={`${styles.slot} ${styles.booked}`}
+                    className={`${styles.slot} ${styles.booked} ${styles.clickable}`}
+                    onClick={() => handleBookingClick(booking)}
                     role="cell"
-                    aria-label={`${schedule.roomName} klockan ${slot.time}: Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}`}
-                    title={`Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}`}
+                    aria-label={`${schedule.roomName} klockan ${slot.time}: Bokad av ${booking.userFirstname} ${booking.userLastname}, ${booking.associationName}. Klicka för detaljer.`}
+                    title="Klicka för att se detaljer"
                   >
                     <span className={styles.statusIconSchedule} aria-hidden="true">✗</span>
                     <div className={styles.bookingInfo}>
@@ -239,7 +296,7 @@ function ScheduleView() {
                         {booking.associationName}
                       </div>
                     </div>
-                  </div>
+                  </button>
                 )
               }
 
@@ -270,6 +327,15 @@ function ScheduleView() {
             setSelectedSlot(null)
           }}
           onSuccess={handleBookingSuccess}
+        />
+      )}
+
+      {selectedBooking && (
+        <BookingDetailsModal
+          booking={selectedBooking}
+          canDelete={canDeleteBooking(selectedBooking)}
+          onDelete={handleDeleteBooking}
+          onClose={handleBookingDetailsClose}
         />
       )}
       </div>

@@ -14,6 +14,19 @@
   flex-wrap: wrap;
 }
 
+.successMessage {
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #D4EDDA;
+  border: 1px solid #C3E6CB;
+  border-left: 4px solid #198754;
+  border-radius: 6px;
+  color: #155724;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
 .instructionText {
   text-align: center;
   padding: 0.8rem 1.2rem;
@@ -130,6 +143,22 @@
   border: 3px solid #E63946;
   font-weight: bold;
   cursor: not-allowed;
+  position: relative;
+}
+
+.slot.booked.clickable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.slot.booked.clickable:hover {
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+  transform: translateY(-2px);
+}
+
+.slot.booked.clickable:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
 }
 
 .slot.blocked {
@@ -169,6 +198,38 @@
 .bookingAssociation {
   font-size: 0.9rem;
   opacity: 0.9;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: #DC3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  opacity: 0.9;
+  z-index: 10;
+}
+
+.deleteButton:hover {
+  background-color: #C82333;
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.3);
+}
+
+.deleteButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
 }
 
 .error {
