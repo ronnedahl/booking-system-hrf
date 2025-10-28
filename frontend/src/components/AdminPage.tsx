@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import OrganizationNav from './OrganizationNav'
+import AddAssociationForm from './admin/AddAssociationForm'
+import DeleteConfirmModal from './admin/DeleteConfirmModal'
 import styles from './AdminPage.module.css'
 
 interface Association {
@@ -19,6 +21,8 @@ export default function AdminPage() {
   const [newPassword, setNewPassword] = useState('')
   const [updateLoading, setUpdateLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [showAddForm, setShowAddForm] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<Association | null>(null)
 
   useEffect(() => {
     fetchAssociations()
@@ -122,6 +126,51 @@ export default function AdminPage() {
     })
   }
 
+  const handleAddSuccess = () => {
+    setShowAddForm(false)
+    setSuccessMessage('Föreningen har skapats!')
+    fetchAssociations()
+    setTimeout(() => setSuccessMessage(null), 5000)
+  }
+
+  const handleDeleteClick = (association: Association) => {
+    setDeleteTarget(association)
+  }
+
+  const handleDeleteConfirm = async (associationId: number) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL
+      const response = await fetch(`${apiUrl}/api/admin/deleteAssociation.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ associationId })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete association')
+      }
+
+      setSuccessMessage(data.message)
+      setDeleteTarget(null)
+      await fetchAssociations()
+
+      setTimeout(() => setSuccessMessage(null), 5000)
+
+    } catch (err) {
+      console.error('Error deleting association:', err)
+      throw err
+    }
+  }
+
+  const handleDeleteCancel = () => {
+    setDeleteTarget(null)
+  }
+
   return (
     <>
       <OrganizationNav organizationName="Admin Panel" />
@@ -129,9 +178,18 @@ export default function AdminPage() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h1>Hantera föreningar</h1>
-          <button onClick={logout} className={styles.logoutButton}>
-            Logga ut
-          </button>
+          <div className={styles.headerButtons}>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className={styles.addButton}
+              aria-label="Lägg till ny förening"
+            >
+              Lägg till förening
+            </button>
+            <button onClick={logout} className={styles.logoutButton}>
+              Logga ut
+            </button>
+          </div>
         </div>
 
         {successMessage && (
@@ -144,6 +202,13 @@ export default function AdminPage() {
           <div className={styles.errorMessage} role="alert" aria-live="assertive">
             {error}
           </div>
+        )}
+
+        {showAddForm && (
+          <AddAssociationForm
+            onSuccess={handleAddSuccess}
+            onCancel={() => setShowAddForm(false)}
+          />
         )}
 
         {loading ? (
@@ -204,17 +269,34 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => handleEdit(association.id)}
-                    className={styles.editButton}
-                    aria-label={`Ändra lösenord för ${association.name}`}
-                  >
-                    Ändra lösenord
-                  </button>
+                  <div className={styles.cardActions}>
+                    <button
+                      onClick={() => handleEdit(association.id)}
+                      className={styles.editButton}
+                      aria-label={`Ändra lösenord för ${association.name}`}
+                    >
+                      Ändra lösenord
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(association)}
+                      className={styles.deleteButton}
+                      aria-label={`Radera ${association.name}`}
+                    >
+                      Radera
+                    </button>
+                  </div>
                 )}
               </div>
             ))}
           </div>
+        )}
+
+        {deleteTarget && (
+          <DeleteConfirmModal
+            association={deleteTarget}
+            onConfirm={handleDeleteConfirm}
+            onCancel={handleDeleteCancel}
+          />
         )}
       </div>
     </>

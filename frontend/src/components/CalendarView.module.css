@@ -14,10 +14,10 @@
   text-align: center;
   padding: 1rem 1.5rem;
   margin-bottom: 1.5rem;
-  background-color: #E6F0F6;
-  border-left: 4px solid #198754;
+  background-color: #FFFFFF;
+  border: 1px solid #DEE2E6;
   border-radius: 6px;
-  color: #212529;
+  color: #6C757D;
   font-size: 1.1rem;
   line-height: 1.5;
 }
@@ -33,13 +33,13 @@
   margin: 0;
   font-size: 2.5rem;
   text-transform: capitalize;
-  color: #005A9C;
+  color: #212529;
   font-weight: bold;
 }
 
 .navButton {
   background: none;
-  border: 2px solid #005A9C;
+  border: 2px solid #495057;
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -48,7 +48,7 @@
   justify-content: center;
   align-items: center;
   font-size: 2rem;
-  color: #005A9C;
+  color: #495057;
   font-weight: bold;
 }
 
@@ -69,7 +69,7 @@
   color: #212529;
   font-size: 1.4rem;
   padding: 1rem 0;
-  border-bottom: 3px solid #005A9C;
+  border-bottom: 3px solid #212529;
 }
 
 .dayCell {
@@ -93,19 +93,19 @@
 }
 
 .dayCell.today {
-  background-color: #E6F0F6;
+  background-color: #F8F9FA;
 }
 
 .dayCell.available {
-  background-color: #198754;
-  color: #FFFFFF;
-  border-color: #146C43;
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #212529;
 }
 
 .dayCell.fullyBooked {
-  background-color: #E63946;
-  color: #FFFFFF;
-  border-color: #C1121F;
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #E63946;
 }
 
 .dayContent {
@@ -124,6 +124,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   line-height: 1;
+  color: inherit;
 }
 
 .bookingIndicator {
@@ -172,11 +173,17 @@
   .weekdayHeader {
     font-size: 1.2rem;
     padding: 0.8rem 0;
+    border-bottom-width: 2px;
   }
 
   .dayCell {
     padding: 1.2rem 0.8rem;
     min-height: 80px;
+  }
+
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
   }
 
   .dayNumber {
@@ -243,6 +250,11 @@
     border-width: 1px;
   }
 
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
+  }
+
   .dayNumber {
     font-size: 1.5rem;
   }
@@ -307,6 +319,11 @@
     border-radius: 6px;
   }
 
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
+  }
+
   .dayNumber {
     font-size: 1.3rem;
   }
@@ -364,23 +381,20 @@
 /* Hover effects (only on devices that support hover) */
 @media (hover: hover) {
   .dayCell:not(.past):hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .dayCell.available:hover {
-    background-color: #146C43;
-    border-color: #0F5132;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .dayCell.fullyBooked:hover {
-    background-color: #C1121F;
-    border-color: #A00F1A;
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
   }
 
   .dayCell:not(.available):not(.fullyBooked):not(.past):hover {
-    background-color: #E6F0F6;
-    border-color: #005A9C;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   }
 }
 

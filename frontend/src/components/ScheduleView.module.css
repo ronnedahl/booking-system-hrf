@@ -18,10 +18,10 @@
   text-align: center;
   padding: 0.8rem 1.2rem;
   margin-bottom: 1.5rem;
-  background-color: #E6F0F6;
-  border-left: 4px solid #005A9C;
+  background-color: #FFFFFF;
+  border: 1px solid #DEE2E6;
   border-radius: 6px;
-  color: #212529;
+  color: #6C757D;
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -29,7 +29,7 @@
 .header h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #005A9C;
+  color: #212529;
   text-transform: capitalize;
   font-weight: 700;
 }
@@ -42,12 +42,12 @@
   cursor: pointer;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #005A9C;
-  transition: background-color 0.2s;
+  color: #495057;
+  transition: all 0.2s;
 }
 
 .backButton:hover {
-  background-color: #E6F0F6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .backButton:focus-visible {
@@ -71,8 +71,9 @@
   font-weight: bold;
   padding: 0.75rem;
   text-align: center;
-  background-color: #005A9C;
-  color: white;
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 2px solid #212529;
   border-radius: 4px;
   font-size: 1.3rem;
 }
@@ -106,19 +107,16 @@
 }
 
 .slot.free {
-  background-color: #198754;
-  color: #FFFFFF;
-  border: 2px solid #146C43;
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #212529;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .slot.free:hover {
-  background-color: #146C43;
-  border-color: #0F5132;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(21, 135, 84, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .slot.free:focus-visible {
@@ -127,12 +125,11 @@
 }
 
 .slot.booked {
-  background-color: #E63946;
-  color: #FFFFFF;
-  border: 2px solid #C1121F;
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #E63946;
   font-weight: bold;
   cursor: not-allowed;
-  box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
 }
 
 .slot.blocked {
@@ -147,6 +144,7 @@
   font-size: 1.4rem;
   font-weight: bold;
   line-height: 1;
+  color: inherit;
 }
 
 .blockedIcon {

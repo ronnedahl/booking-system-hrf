@@ -67,9 +67,9 @@ export default function CalendarView() {
 
         {/* Instruction text */}
         <div className={styles.instructionText}>
-          <strong>Grön bakgrund (✓)</strong> = Lediga tider finns | <strong>Röd bakgrund (✗)</strong> = Fullbokat
+          <strong>Svart ram (✓)</strong> = Lediga tider finns | <strong>Röd ram (✗)</strong> = Fullbokat
           <br />
-          Klicka på en grön dag för att se vilka tider som är lediga i Wilmer 1 och Wilmer 2.
+          Klicka på en dag med svart ram för att se vilka tider som är lediga i Wilmer 1 och Wilmer 2.
         </div>
 
         {/* Error message */}
