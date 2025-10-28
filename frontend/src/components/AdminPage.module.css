@@ -24,6 +24,35 @@
   font-weight: 700;
 }
 
+.headerButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.addButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #198754;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.addButton:hover {
+  background-color: #146C43;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.2);
+}
+
+.addButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
 .logoutButton {
   padding: 0.75rem 1.5rem;
   background-color: #E63946;
@@ -242,8 +271,13 @@
   outline-offset: 2px;
 }
 
+.cardActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
 .editButton {
-  width: 100%;
+  flex: 1;
   padding: 0.75rem;
   background-color: #005A9C;
   color: #FFFFFF;
@@ -264,6 +298,30 @@
   outline-offset: 2px;
 }
 
+.deleteButton {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #DC3545;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #C82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+.deleteButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .container {
@@ -273,6 +331,17 @@
 
   .header h1 {
     font-size: 1.8rem;
+  }
+
+  .headerButtons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .addButton,
+  .logoutButton {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 
   .associationsGrid {
@@ -285,7 +354,8 @@
     gap: 0.5rem;
   }
 
-  .buttonGroup {
+  .buttonGroup,
+  .cardActions {
     flex-direction: column;
   }
 }
