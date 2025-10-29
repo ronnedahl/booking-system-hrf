@@ -256,17 +256,17 @@ function BookingHistory() {
                 <tbody>
                   {filteredBookings.map(booking => (
                     <tr key={booking.id}>
-                      <td>{formatDate(booking.date)}</td>
-                      <td>
+                      <td data-label="Datum">{formatDate(booking.date)}</td>
+                      <td data-label="Tid">
                         {formatTime(booking.startTime)} - {formatTime(booking.endTime)}
                       </td>
-                      <td>{booking.roomName}</td>
-                      <td>
+                      <td data-label="Lokal">{booking.roomName}</td>
+                      <td data-label="Bokad av">
                         {booking.userFirstname} {booking.userLastname}
                       </td>
-                      <td>{booking.associationName}</td>
-                      <td>{booking.duration} min</td>
-                      <td>{formatCreatedAt(booking.createdAt)}</td>
+                      <td data-label="Förening">{booking.associationName}</td>
+                      <td data-label="Varaktighet">{booking.duration} min</td>
+                      <td data-label="Skapad">{formatCreatedAt(booking.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>

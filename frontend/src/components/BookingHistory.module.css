@@ -227,11 +227,25 @@
   outline-offset: 2px;
 }
 
-/* Responsive */
+/* Mobile: Show as cards instead of table */
 @media (max-width: 768px) {
   .container {
     padding: 0.5rem;
     padding-top: 90px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header h2 {
+    font-size: 1.5rem;
+  }
+
+  .backButton {
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
   }
 
   .filterRow {
@@ -247,25 +261,102 @@
     flex: 1;
   }
 
+  /* Card layout for mobile */
+  .tableWrapper {
+    border: none;
+    overflow: visible;
+  }
+
   .table {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: none;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 2px solid #DEE2E6;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .table tbody tr:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .table td {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    padding: 0.75rem 0;
+    border: none;
+    border-bottom: 1px solid #E9ECEF;
+    font-size: 0.95rem;
+  }
+
+  .table td:last-child {
+    border-bottom: none;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #495057;
+    text-transform: uppercase;
     font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+
+  .stats {
+    font-size: 0.9rem;
+  }
+
+  .loadMoreButton {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* Tablet: Scrollable table */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .container {
+    padding: 1rem;
+    padding-top: 90px;
+  }
+
+  .table {
+    font-size: 0.9rem;
   }
 
   .table th,
   .table td {
-    padding: 0.75rem 0.5rem;
+    padding: 0.9rem 0.6rem;
   }
 
   .tableWrapper {
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 
-  /* Make table scrollable on mobile */
   .table {
-    min-width: 800px;
+    min-width: 900px;
   }
 }
 
+/* Desktop: Full table */
 @media (min-width: 1024px) {
   .container {
     padding: 1.5rem;

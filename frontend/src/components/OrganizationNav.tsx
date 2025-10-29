@@ -24,6 +24,7 @@ export default function OrganizationNav({ organizationName }: OrganizationNavPro
 
   const isHistoryPage = location.pathname === '/history'
   const isCalendarPage = location.pathname === '/calendar'
+  const showLogo = !isHistoryPage && !isCalendarPage
 
   return (
     <nav
@@ -31,12 +32,14 @@ export default function OrganizationNav({ organizationName }: OrganizationNavPro
       aria-label="Organisationsnavigation"
       className={styles.nav}
     >
-      {/* Logo - hidden on mobile/tablet, shown on desktop */}
-      <img
-        src={logo}
-        alt="Funktionsrätt logotyp"
-        className={styles.logo}
-      />
+      {/* Logo - hidden on mobile/tablet, calendar and history page */}
+      {showLogo && (
+        <img
+          src={logo}
+          alt="Funktionsrätt logotyp"
+          className={styles.logo}
+        />
+      )}
 
       {/* Navigation buttons */}
       <div className={styles.navButtons}>
