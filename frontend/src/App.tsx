@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Login from './components/Login'
 import CalendarView from './components/CalendarView'
 import ScheduleView from './components/ScheduleView'
+import BookingHistory from './components/BookingHistory'
 import AdminPage from './components/AdminPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,14 @@ function SchedulePage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
       <ScheduleView />
+    </div>
+  )
+}
+
+function BookingHistoryPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
+      <BookingHistory />
     </div>
   )
 }
@@ -61,6 +70,12 @@ function AppRoutes() {
       <Route path="/schedule/:date" element={
         <ProtectedRoute>
           <SchedulePage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/history" element={
+        <ProtectedRoute>
+          <BookingHistoryPage />
         </ProtectedRoute>
       } />
 

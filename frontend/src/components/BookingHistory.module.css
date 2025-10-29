@@ -1,0 +1,279 @@
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-top: 100px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #212529;
+  font-weight: 700;
+}
+
+.backButton {
+  padding: 0.6rem 1.2rem;
+  background-color: #F1F3F5;
+  border: 1px solid #DEE2E6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #495057;
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
+.error {
+  color: #DC3545;
+  padding: 1rem;
+  background-color: #FFE6E6;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #DC3545;
+}
+
+/* Filters */
+.filters {
+  background-color: #F8F9FA;
+  border: 1px solid #DEE2E6;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterGroup label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.dateInput,
+.searchInput {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #CED4DA;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.dateInput:focus,
+.searchInput:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.filterActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: end;
+}
+
+.applyButton,
+.resetButton {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.applyButton {
+  background-color: #007BFF;
+  color: white;
+}
+
+.applyButton:hover {
+  background-color: #0056B3;
+}
+
+.resetButton {
+  background-color: #6C757D;
+  color: white;
+}
+
+.resetButton:hover {
+  background-color: #545B62;
+}
+
+.applyButton:focus-visible,
+.resetButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
+/* Statistics */
+.stats {
+  margin-bottom: 1rem;
+  color: #6C757D;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid #DEE2E6;
+  margin-bottom: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.table thead {
+  background-color: #F8F9FA;
+  border-bottom: 2px solid #DEE2E6;
+}
+
+.table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 700;
+  color: #495057;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 1rem;
+  border-top: 1px solid #DEE2E6;
+  color: #212529;
+  font-size: 0.95rem;
+}
+
+.table tbody tr:hover {
+  background-color: #F8F9FA;
+}
+
+/* No results */
+.noResults {
+  text-align: center;
+  padding: 3rem;
+  color: #6C757D;
+  font-size: 1.1rem;
+}
+
+/* Load more */
+.loadMore {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.loadMoreButton {
+  padding: 0.8rem 2rem;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.loadMoreButton:hover:not(:disabled) {
+  background-color: #0056B3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.loadMoreButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loadMoreButton:focus-visible {
+  outline: 3px solid #007BFF;
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+    padding-top: 90px;
+  }
+
+  .filterRow {
+    grid-template-columns: 1fr;
+  }
+
+  .filterActions {
+    width: 100%;
+  }
+
+  .applyButton,
+  .resetButton {
+    flex: 1;
+  }
+
+  .table {
+    font-size: 0.85rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .tableWrapper {
+    overflow-x: scroll;
+  }
+
+  /* Make table scrollable on mobile */
+  .table {
+    min-width: 800px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+    padding-top: 90px;
+  }
+
+  .table th,
+  .table td {
+    padding: 1.25rem;
+  }
+}

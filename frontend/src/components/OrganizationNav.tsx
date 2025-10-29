@@ -1,3 +1,4 @@
+import { useNavigate, useLocation } from 'react-router-dom'
 import logo from '../assets/logga-funktionsratt.png'
 import styles from './OrganizationNav.module.css'
 
@@ -8,7 +9,7 @@ interface OrganizationNavProps {
 /**
  * OrganizationNav - Navigation bar component
  *
- * Purpose: Display the currently logged-in organization name
+ * Purpose: Display the currently logged-in organization name and navigation
  *
  * Props:
  * - organizationName: Name of the organization to display
@@ -18,6 +19,12 @@ interface OrganizationNavProps {
  * - aria-label provides context for screen readers
  */
 export default function OrganizationNav({ organizationName }: OrganizationNavProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const isHistoryPage = location.pathname === '/history'
+  const isCalendarPage = location.pathname === '/calendar'
+
   return (
     <nav
       role="banner"
@@ -30,6 +37,28 @@ export default function OrganizationNav({ organizationName }: OrganizationNavPro
         alt="Funktionsrätt logotyp"
         className={styles.logo}
       />
+
+      {/* Navigation buttons */}
+      <div className={styles.navButtons}>
+        {!isCalendarPage && (
+          <button
+            onClick={() => navigate('/calendar')}
+            className={styles.navButton}
+            aria-label="Gå till kalender"
+          >
+            📅 Kalender
+          </button>
+        )}
+        {!isHistoryPage && (
+          <button
+            onClick={() => navigate('/history')}
+            className={styles.navButton}
+            aria-label="Visa bokningshistorik"
+          >
+            📋 Historik
+          </button>
+        )}
+      </div>
 
       {/* Organization Name - centered */}
       <div
