@@ -1,28 +1,100 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import Login from './components/Login'
+import CalendarView from './components/CalendarView'
+import ScheduleView from './components/ScheduleView'
+import BookingHistory from './components/BookingHistory'
+import AdminPage from './components/AdminPage'
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { authState } = useAuth()
+
+  if (!authState.isAuthenticated) {
+    return <Navigate to="/" replace />
+  }
+
+  return <>{children}</>
+}
+
+function CalendarPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
+      <CalendarView />
+    </div>
+  )
+}
+
+function SchedulePage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
+      <ScheduleView />
+    </div>
+  )
+}
+
+function BookingHistoryPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
+      <BookingHistory />
+    </div>
+  )
+}
+
+function AdminPageWrapper() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#E9ECEF' }}>
+      <AdminPage />
+    </div>
+  )
+}
+
+function AppRoutes() {
+  const { authState } = useAuth()
+
+  return (
+    <Routes>
+      <Route path="/" element={
+        authState.isAuthenticated ? (
+          <Navigate to={authState.role === 'admin' ? '/admin' : '/calendar'} replace />
+        ) : (
+          <Login />
+        )
+      } />
+
+      <Route path="/calendar" element={
+        <ProtectedRoute>
+          <CalendarPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/schedule/:date" element={
+        <ProtectedRoute>
+          <SchedulePage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/history" element={
+        <ProtectedRoute>
+          <BookingHistoryPage />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <AdminPageWrapper />
+        </ProtectedRoute>
+      } />
+    </Routes>
+  )
+}
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/" element={
-            <div className="flex items-center justify-center min-h-screen">
-              <div className="text-center">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  Kanban Bokningssystem
-                </h1>
-                <p className="text-gray-600">
-                  Sprint 1 Complete! 🚀
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Backend API structure ✓ | Frontend setup ✓ | Tailwind CSS v4 ✓ | React Router ✓
-                </p>
-              </div>
-            </div>
-          } />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   )
 }
 

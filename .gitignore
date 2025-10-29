@@ -1,0 +1,42 @@
+# Environment variables (känsliga credentials)
+.env
+.env.local
+.env.production
+backend/.env
+
+# MySQL dumps och backups
+*.sql.bak
+*.sql.backup
+dump*.sql
+backup*.sql
+
+# Node modules
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE och editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS-specifika filer
+.DS_Store
+Thumbs.db
+
+# Temporära filer
+*.tmp
+*.temp
+
+# Test-specifika filer som inte ska committas
+test-booking.sh
+test-mysql.sh

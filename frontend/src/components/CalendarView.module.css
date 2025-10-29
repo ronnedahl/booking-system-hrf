@@ -1,0 +1,409 @@
+/* CalendarView Responsive Styles */
+
+/* Base styles for desktop (default from inline styles) */
+.calendarContainer {
+  font-family: var(--font-family);
+  padding-top: 90px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.instructionText {
+  text-align: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #FFFFFF;
+  border: 1px solid #DEE2E6;
+  border-radius: 6px;
+  color: #6C757D;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.monthHeading {
+  margin: 0;
+  font-size: 2.5rem;
+  text-transform: capitalize;
+  color: #212529;
+  font-weight: bold;
+}
+
+.navButton {
+  background: none;
+  border: 2px solid #495057;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: #495057;
+  font-weight: bold;
+}
+
+.navButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1rem;
+  text-align: center;
+}
+
+.weekdayHeader {
+  font-weight: bold;
+  color: #212529;
+  font-size: 1.4rem;
+  padding: 1rem 0;
+  border-bottom: 3px solid #212529;
+}
+
+.dayCell {
+  padding: 1.5rem 1rem;
+  border: 2px solid #DEE2E6;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  background-color: transparent;
+  opacity: 1;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dayCell.past {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.dayCell.today {
+  background-color: #F8F9FA;
+}
+
+.dayCell.available {
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #212529;
+}
+
+.dayCell.fullyBooked {
+  background-color: #FFFFFF;
+  color: #212529;
+  border: 3px solid #E63946;
+}
+
+.dayContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dayNumber {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.statusIcon {
+  font-size: 1.5rem;
+  font-weight: bold;
+  line-height: 1;
+  color: inherit;
+}
+
+.bookingIndicator {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+}
+
+.bookingIndicator.full {
+  background-color: #DC3545;
+}
+
+.bookingIndicator.partial {
+  background-color: #198754;
+}
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .calendarContainer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 100%;
+  }
+
+  .instructionText {
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .monthHeading {
+    font-size: 2rem;
+  }
+
+  .navButton {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .weekdayHeader {
+    font-size: 1.2rem;
+    padding: 0.8rem 0;
+    border-bottom-width: 2px;
+  }
+
+  .dayCell {
+    padding: 1.2rem 0.8rem;
+    min-height: 80px;
+  }
+
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
+  }
+
+  .dayNumber {
+    font-size: 1.7rem;
+  }
+
+  .statusIcon {
+    font-size: 1.3rem;
+  }
+
+  .dayContent {
+    gap: 0.4rem;
+  }
+
+  .calendarGrid {
+    gap: 0.8rem;
+  }
+
+  .bookingIndicator {
+    width: 12px;
+    height: 12px;
+    bottom: 8px;
+  }
+}
+
+/* Mobile landscape (481px - 767px) */
+@media (max-width: 767px) {
+  .calendarContainer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 80px;
+  }
+
+  .instructionText {
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .calendarHeader {
+    margin-bottom: 1.5rem;
+  }
+
+  .monthHeading {
+    font-size: 1.5rem;
+  }
+
+  .navButton {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+    border-width: 1px;
+  }
+
+  .weekdayHeader {
+    font-size: 1rem;
+    padding: 0.6rem 0;
+    border-bottom-width: 2px;
+  }
+
+  .dayCell {
+    padding: 1rem 0.5rem;
+    min-height: 70px;
+    border-width: 1px;
+  }
+
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
+  }
+
+  .dayNumber {
+    font-size: 1.5rem;
+  }
+
+  .statusIcon {
+    font-size: 1.1rem;
+  }
+
+  .dayContent {
+    gap: 0.3rem;
+  }
+
+  .calendarGrid {
+    gap: 0.5rem;
+  }
+
+  .bookingIndicator {
+    width: 10px;
+    height: 10px;
+    bottom: 5px;
+    border-width: 1px;
+  }
+}
+
+/* Mobile portrait (320px - 480px) */
+@media (max-width: 480px) {
+  .calendarContainer {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 75px;
+  }
+
+  .instructionText {
+    font-size: 0.85rem;
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .calendarHeader {
+    margin-bottom: 1rem;
+  }
+
+  .monthHeading {
+    font-size: 1.2rem;
+  }
+
+  .navButton {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .weekdayHeader {
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+  }
+
+  .dayCell {
+    padding: 0.8rem 0.3rem;
+    min-height: 60px;
+    border-radius: 6px;
+  }
+
+  .dayCell.available,
+  .dayCell.fullyBooked {
+    border-width: 2px;
+  }
+
+  .dayNumber {
+    font-size: 1.3rem;
+  }
+
+  .statusIcon {
+    font-size: 1rem;
+  }
+
+  .dayContent {
+    gap: 0.2rem;
+  }
+
+  .calendarGrid {
+    gap: 0.4rem;
+  }
+
+  .bookingIndicator {
+    width: 8px;
+    height: 8px;
+    bottom: 4px;
+  }
+}
+
+/* Extra small devices (< 320px) */
+@media (max-width: 319px) {
+  .monthHeading {
+    font-size: 1rem;
+  }
+
+  .navButton {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .weekdayHeader {
+    font-size: 0.75rem;
+    padding: 0.4rem 0;
+  }
+
+  .dayCell {
+    padding: 0.6rem 0.2rem;
+    min-height: 50px;
+  }
+
+  .dayNumber {
+    font-size: 1.1rem;
+  }
+
+  .calendarGrid {
+    gap: 0.3rem;
+  }
+}
+
+/* Hover effects (only on devices that support hover) */
+@media (hover: hover) {
+  .dayCell:not(.past):hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .dayCell.available:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .dayCell.fullyBooked:hover {
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.2);
+  }
+
+  .dayCell:not(.available):not(.fullyBooked):not(.past):hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* Focus styles */
+.dayCell:focus {
+  outline: 4px solid #007BFF;
+  outline-offset: 3px;
+}
+
+.dayCell.past:focus {
+  outline: none;
+}

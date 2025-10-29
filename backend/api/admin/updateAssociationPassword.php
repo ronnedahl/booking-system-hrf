@@ -8,11 +8,56 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendErrorResponse('Method not allowed', 405);
 }
 
-// Verify admin token
-verifyAdminToken();
+// Verify admin session
+verifyAdminSession();
 
-// Placeholder for Sprint 5
-sendJsonResponse([
-    'success' => false,
-    'error' => 'UpdateAssociationPassword endpoint - to be implemented in Sprint 5'
-]);
+// Get JSON input
+$data = getJsonInput();
+validateRequiredFields($data, ['associationId', 'newPassword']);
+
+$associationId = (int) $data['associationId'];
+$newPassword = trim($data['newPassword']);
+
+// Validate password
+if (strlen($newPassword) < 6) {
+    sendErrorResponse('Lösenordet måste vara minst 6 tecken långt', 400);
+}
+
+if (strlen($newPassword) > 50) {
+    sendErrorResponse('Lösenordet kan inte vara längre än 50 tecken', 400);
+}
+
+try {
+    $pdo = getDbConnection();
+
+    // Check if association exists
+    $checkStmt = $pdo->prepare("SELECT id, name FROM associations WHERE id = ?");
+    $checkStmt->execute([$associationId]);
+    $association = $checkStmt->fetch();
+
+    if (!$association) {
+        sendErrorResponse('Föreningen hittades inte', 404);
+    }
+
+    // Hash the new password
+    $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+    // Update the password
+    $updateStmt = $pdo->prepare("
+        UPDATE associations
+        SET code_hash = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+    ");
+
+    $updateStmt->execute([$passwordHash, $associationId]);
+
+    sendJsonResponse([
+        'success' => true,
+        'message' => 'Lösenordet för ' . $association['name'] . ' har uppdaterats',
+        'associationId' => $associationId,
+        'associationName' => $association['name']
+    ]);
+
+} catch (PDOException $e) {
+    sendErrorResponse('Database error: ' . $e->getMessage(), 500);
+}

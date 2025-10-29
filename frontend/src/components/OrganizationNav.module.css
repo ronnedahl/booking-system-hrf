@@ -1,0 +1,155 @@
+/* OrganizationNav Responsive Styles */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: rgba(0, 90, 156, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  display: block; /* Show on desktop by default */
+  margin-left: 3rem;
+}
+
+.navButtons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-right: 3rem;
+}
+
+.navButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #FFFFFF;
+  border: 3px solid #005A9C;
+  border-radius: 8px;
+  color: #005A9C;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.navButton:hover {
+  background-color: #FFD700;
+  border-color: #005A9C;
+  color: #005A9C;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.navButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navButton:focus-visible {
+  outline: 4px solid #FFD700;
+  outline-offset: 3px;
+}
+
+.organizationName {
+  color: #FFFFFF;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+  flex: 1;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+/* Tablet and smaller: Hide logo, keep text centered */
+@media (max-width: 1024px) {
+  .logo {
+    display: none; /* Hide logo on tablet and mobile */
+    margin-left: 0;
+  }
+
+  .nav {
+    padding: 0 1.5rem;
+  }
+
+  .navButtons {
+    margin-right: 0;
+  }
+
+  .organizationName {
+    font-size: 1.3rem;
+  }
+
+  .navButton {
+    font-size: 1.1rem;
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+/* Mobile landscape */
+@media (max-width: 767px) {
+  .nav {
+    height: 60px;
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .logo {
+    order: 3; /* Move logo to end */
+  }
+
+  .navButtons {
+    order: 1; /* Keep buttons at start */
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  .organizationName {
+    order: 2; /* Text in middle */
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .navButton {
+    font-size: 1rem;
+    padding: 0.5rem 0.8rem;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .nav {
+    height: 55px;
+    padding: 0 0.3rem;
+    gap: 0.3rem;
+  }
+
+  .navButtons {
+    gap: 0.2rem;
+  }
+
+  .organizationName {
+    font-size: 0.75rem;
+    letter-spacing: 0.02rem;
+    padding: 0 0.3rem;
+  }
+
+  .navButton {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

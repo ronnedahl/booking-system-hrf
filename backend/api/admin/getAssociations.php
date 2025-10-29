@@ -8,11 +8,31 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     sendErrorResponse('Method not allowed', 405);
 }
 
-// Verify admin token
-verifyAdminToken();
+// Verify admin session
+verifyAdminSession();
 
-// Placeholder for Sprint 5
-sendJsonResponse([
-    'success' => false,
-    'error' => 'GetAssociations endpoint - to be implemented in Sprint 5'
-]);
+try {
+    $pdo = getDbConnection();
+
+    // Get all associations with their details
+    $stmt = $pdo->prepare("
+        SELECT
+            id,
+            name,
+            created_at,
+            updated_at
+        FROM associations
+        ORDER BY name ASC
+    ");
+
+    $stmt->execute();
+    $associations = $stmt->fetchAll();
+
+    sendJsonResponse([
+        'success' => true,
+        'associations' => $associations
+    ]);
+
+} catch (PDOException $e) {
+    sendErrorResponse('Database error: ' . $e->getMessage(), 500);
+}
