@@ -34,8 +34,10 @@ SOURCE backend/sql/schema.sql;
 # PHP server (från backend/ katalog)
 php -S localhost:8000 -t .
 
-# Testa API endpoint
-bash test-booking.sh  # Kör alla API-tester
+# Testa API endpoints (från root katalog)
+bash test-booking.sh              # Kör boknings-API tester
+bash test-delete-booking.sh       # Testa delete bokning
+bash test-admin-api.sh            # Testa admin endpoints
 ```
 
 ### API Testing Examples
@@ -60,7 +62,13 @@ handicapp-booking/
 │   │   ├── login.php              # POST: Session-based auth (users + admin)
 │   │   ├── getBookings.php        # GET: Hämta bokningar för månad
 │   │   ├── createBooking.php      # POST: Skapa bokning med validering
+│   │   ├── deleteBooking.php      # POST: Ta bort bokning med lösenord
+│   │   ├── getBookingHistory.php  # GET: Sökbar bokningshistorik
 │   │   └── admin/                 # Bearer auth required
+│   │       ├── getAssociations.php
+│   │       ├── createAssociation.php
+│   │       ├── deleteAssociation.php
+│   │       └── updateAssociationPassword.php
 │   ├── config/
 │   │   ├── config.php             # PDO connection + CORS + env vars
 │   │   └── auth.php               # Auth helpers
@@ -69,12 +77,19 @@ handicapp-booking/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Login.tsx          # ARIA-enhanced login (se TILLGÄNGLIGHET.md)
-│   │   │   ├── CalendarView.tsx   # Månadsvy med tillgänglighetsmarkering
-│   │   │   └── calendar/          # Modular kalenderkomponenter
+│   │   │   ├── Login.tsx              # ARIA-enhanced login (se TILLGÄNGLIGHET.md)
+│   │   │   ├── CalendarView.tsx       # Månadsvy med tillgänglighetsmarkering
+│   │   │   ├── ScheduleView.tsx       # Dagsvy med tidsluckor och bokningsmodal
+│   │   │   ├── BookingModal.tsx       # Modal för att skapa bokningar
+│   │   │   ├── DeleteBookingModal.tsx # Modal för att ta bort bokningar med lösenord
+│   │   │   ├── BookingHistory.tsx     # Sökbar bokningshistorik med filter
+│   │   │   ├── BookingDetailsModal.tsx # Visa detaljer för specifik bokning
+│   │   │   ├── OrganizationNav.tsx    # Navigation mellan kalender och historik
+│   │   │   ├── AdminPage.tsx          # Admin dashboard för föreningar
+│   │   │   └── calendar/              # Modular kalenderkomponenter
 │   │   ├── contexts/
-│   │   │   └── AuthContext.tsx    # Global auth: role, associationId, associationName
-│   │   └── App.tsx                # Router: /, /calendar, /schedule/:date, /admin
+│   │   │   └── AuthContext.tsx        # Global auth: role, associationId, associationName
+│   │   └── App.tsx                    # Router: /, /calendar, /schedule/:date, /history, /admin
 │   └── package.json               # Scripts: dev, build, lint, mock-api
 ├── test-booking.sh                # Automated API test suite
 ├── TILLGÄNGLIGHET.md              # WCAG 2.1 compliance documentation
@@ -104,8 +119,10 @@ handicapp-booking/
 
 ### Critical Data Flows
 1. **Login Flow**: Login.tsx → POST /api/login.php → Session cookie → AuthContext update → Role-based redirect
-2. **Booking Flow**: CalendarView → Select date → (Future: ScheduleView) → POST /api/createBooking.php → Validation → DB insert
-3. **Admin Flow**: Admin login → Bearer token → GET/POST /api/admin/* endpoints
+2. **Booking Flow**: CalendarView → Select date → ScheduleView → BookingModal → POST /api/createBooking.php → Validation → DB insert
+3. **Delete Flow**: ScheduleView → Click booked slot → DeleteBookingModal → Enter password → POST /api/deleteBooking.php → Verification → Delete
+4. **History Flow**: OrganizationNav → BookingHistory → GET /api/getBookingHistory.php → Filter/search → Display results
+5. **Admin Flow**: Admin login → Bearer token → GET/POST /api/admin/* endpoints
 
 ## API Kontrakt
 
@@ -135,8 +152,26 @@ handicapp-booking/
 **Auth**: None
 **Response**: Array of bookings med room/association names joined
 
+### POST /api/deleteBooking.php
+**Auth**: Session cookie required
+**Request**: `{ "bookingId": 123, "password": "TEST123" }`
+**Validation**: Password måste matcha association som skapade bokningen
+**Response**:
+- Success: `{ "success": true, "message": "Booking deleted successfully" }` (200)
+- Fail: `{ "success": false, "error": "Invalid password" }` (403)
+
+### GET /api/getBookingHistory.php?search=Anna&startDate=2025-01-01&endDate=2025-12-31
+**Auth**: Session cookie required (user role)
+**Query Parameters**:
+- `search` (optional): Sök i förnamn, efternamn, lokalnamn
+- `startDate` (optional): Filter från datum
+- `endDate` (optional): Filter till datum
+**Response**: Array of bookings med room names, filtrerad på associationId från session
+
 ### Admin Endpoints (Bearer Auth Required)
-- **GET /api/admin/getAssociations.php**: Lista föreningar
+- **GET /api/admin/getAssociations.php**: Lista alla föreningar
+- **POST /api/admin/createAssociation.php**: Skapa ny förening
+- **POST /api/admin/deleteAssociation.php**: Ta bort förening
 - **POST /api/admin/updateAssociationPassword.php**: Uppdatera föreningskod
 
 ## Databas Schema
@@ -179,6 +214,12 @@ VITE_API_URL=http://localhost:8000/api  # Real backend
 $validationResult = validateBookingData($data);
 if (!$validationResult['valid']) {
     sendErrorResponse($validationResult['error'], 400);
+}
+
+// Business hours validation (blockerar 09:00-10:00 och 12:00-13:00)
+$timeValidation = validateBusinessHours($startTime, $duration);
+if (!$timeValidation['valid']) {
+    sendErrorResponse($timeValidation['error'], 400);
 }
 
 // Session auth check
@@ -237,9 +278,18 @@ Se **TILLGÄNGLIGHET.md** för fullständig dokumentation.
 - **Frontend**: Component-scoped CSS modules, TypeScript för type safety
 - **Testing**: `test-booking.sh` för automated API testing
 
+## Viktiga Affärsregler (från booking.md)
+
+- **Lokaler**: 2 st (Wilmer 1, Wilmer 2)
+- **Föreningar**: 8 st, varje med unikt lösenord
+- **Öppettider**: 08:00-22:00 (men se blockerade tider nedan)
+- **Blockerade tider**: 09:00-10:00 och 12:00-13:00 (ej bokningsbara)
+- **Bokningslängd**: Endast 1 timme åt gången (60 min)
+- **Bokningsinformation**: För- och efternamn krävs vid bokning
+- **Radering**: Kräver lösenord från skapande förening
+
 ## Git Workflow
 
-**Current Branch**: feat/booking-component
 **Main Branch**: main (används för PRs)
 
 **Commit Style**:
@@ -249,7 +299,7 @@ Epic X: Brief description
 - Bullet point details if needed
 ```
 
----
-
-**Status**: Sprint 3 (Kalendervy) pågående
-**Senaste**: CalendarView implementerad med månadsnavigering
+**Commit Co-Author**:
+```
+Co-Authored-By: Claude <noreply@anthropic.com>
+```

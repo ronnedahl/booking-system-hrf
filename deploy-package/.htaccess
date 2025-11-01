@@ -1,0 +1,27 @@
+# Root .htaccess för one.com
+# Hanterar routing mellan frontend och backend
+
+RewriteEngine On
+RewriteBase /
+
+# Security: Block access to sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to backend .env
+RewriteRule ^backend/\.env$ - [F,L]
+
+# API requests go to backend
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ backend/api/$1 [L,QSA]
+
+# All other requests serve static files from frontend dist
+# If file exists, serve it
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# SPA fallback - serve index.html for client-side routing
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule . /index.html [L]

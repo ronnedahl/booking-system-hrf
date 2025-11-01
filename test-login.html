@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - fastai.se</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #005A9C;
+            margin-top: 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #005A9C;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #004080;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Login API</h1>
+
+        <div class="info">
+            <strong>Test-lösenord:</strong><br>
+            Admin: <code>admin123</code><br>
+            Föreningar: <code>petertestar</code>
+        </div>
+
+        <label for="code">Ange kod:</label>
+        <input type="text" id="code" placeholder="admin123 eller petertestar" value="admin123">
+
+        <button onclick="testLogin()">Testa Login</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function testLogin() {
+            const code = document.getElementById('code').value;
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.innerHTML = '<div class="info">Testar login...</div>';
+
+            try {
+                const response = await fetch('/api/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ code: code })
+                });
+
+                const data = await response.json();
+
+                const resultClass = data.success ? 'success' : 'error';
+                const statusText = data.success ? '✅ SUCCESS' : '❌ ERROR';
+
+                resultDiv.innerHTML = `
+                    <div class="${resultClass}">
+                        <strong>${statusText}</strong><br><br>
+                        <strong>HTTP Status:</strong> ${response.status}<br><br>
+                        <strong>Response:</strong><br>
+                        ${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <strong>❌ NETWORK ERROR</strong><br><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('code').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testLogin();
+            }
+        });
+    </script>
+</body>
+</html>
